@@ -1,0 +1,318 @@
+---
+title: "SQL Injection Prevention: Comprehensive Security Guide"
+publishedAt: "2024-06-15"
+summary: "Essential techniques and best practices for preventing SQL injection attacks in modern web applications, with practical examples in C#, Node.js, and Python."
+image: "/images/og/home.jpg"
+---
+
+SQL injection remains one of the most critical security vulnerabilities in web applications. This comprehensive guide covers prevention techniques, code examples, and best practices to protect your applications from these attacks.
+
+## Understanding SQL Injection
+
+SQL injection occurs when user input is directly concatenated into SQL queries without proper sanitization, allowing attackers to manipulate database operations.
+
+### Vulnerable Code Example
+```csharp
+// NEVER DO THIS - Vulnerable to SQL Injection
+public User GetUser(string username, string password)
+{
+    string query = $"SELECT * FROM Users WHERE Username = '{username}' AND Password = '{password}'";
+    return ExecuteQuery(query);
+}
+```
+
+An attacker could input: `admin'; DROP TABLE Users; --` to execute malicious SQL.
+
+## Prevention Techniques
+
+### 1. Parameterized Queries (Recommended)
+
+#### C# with Entity Framework
+```csharp
+public async Task<User> GetUserAsync(string username, string password)
+{
+    return await _context.Users
+        .FirstOrDefaultAsync(u => u.Username == username && u.Password == password);
+}
+
+// Or with raw SQL parameters
+public User GetUserWithRawSQL(string username, string password)
+{
+    var query = "SELECT * FROM Users WHERE Username = @username AND Password = @password";
+    var parameters = new[]
+    {
+        new SqlParameter("@username", username),
+        new SqlParameter("@password", password)
+    };
+    return _context.Users.FromSqlRaw(query, parameters).FirstOrDefault();
+}
+```
+
+#### Node.js with MySQL
+```javascript
+const mysql = require('mysql2/promise');
+
+async function getUser(username, password) {
+    const connection = await mysql.createConnection(dbConfig);
+    
+    // Parameterized query
+    const [rows] = await connection.execute(
+        'SELECT * FROM users WHERE username = ? AND password = ?',
+        [username, password]
+    );
+    
+    await connection.end();
+    return rows[0];
+}
+```
+
+#### Python with SQLAlchemy
+```python
+from sqlalchemy.orm import Session
+from sqlalchemy import text
+
+def get_user(db: Session, username: str, password: str):
+    # Using ORM (recommended)
+    return db.query(User).filter(
+        User.username == username,
+        User.password == password
+    ).first()
+
+# Or with parameterized raw SQL
+def get_user_raw_sql(db: Session, username: str, password: str):
+    query = text("SELECT * FROM users WHERE username = :username AND password = :password")
+    result = db.execute(query, {"username": username, "password": password})
+    return result.fetchone()
+```
+
+### 2. Stored Procedures
+
+```sql
+CREATE PROCEDURE GetUser
+    @Username NVARCHAR(50),
+    @Password NVARCHAR(100)
+AS
+BEGIN
+    SELECT * FROM Users 
+    WHERE Username = @Username AND Password = @Password
+END
+```
+
+```csharp
+public User GetUserStoredProc(string username, string password)
+{
+    var parameters = new[]
+    {
+        new SqlParameter("@Username", username),
+        new SqlParameter("@Password", password)
+    };
+    
+    return _context.Users
+        .FromSqlRaw("EXEC GetUser @Username, @Password", parameters)
+        .FirstOrDefault();
+}
+```
+
+### 3. Input Validation and Sanitization
+
+```csharp
+public class UserInputValidator
+{
+    public static bool IsValidUsername(string username)
+    {
+        // Only allow alphanumeric characters and underscores
+        return !string.IsNullOrEmpty(username) && 
+               Regex.IsMatch(username, @"^[a-zA-Z0-9_]+$") &&
+               username.Length <= 50;
+    }
+    
+    public static string SanitizeInput(string input)
+    {
+        if (string.IsNullOrEmpty(input))
+            return string.Empty;
+            
+        // Remove potentially dangerous characters
+        return input.Replace("'", "''")
+                   .Replace(";", "")
+                   .Replace("--", "")
+                   .Replace("/*", "")
+                   .Replace("*/", "")
+                   .Replace("xp_", "")
+                   .Replace("sp_", "");
+    }
+}
+```
+
+### 4. Escaping Special Characters
+
+```javascript
+function escapeSQL(input) {
+    if (typeof input !== 'string') return input;
+    
+    return input
+        .replace(/'/g, "''")
+        .replace(/\\/g, "\\\\")
+        .replace(/\x00/g, "\\0")
+        .replace(/\n/g, "\\n")
+        .replace(/\r/g, "\\r")
+        .replace(/\x1a/g, "\\Z");
+}
+```
+
+## Advanced Security Measures
+
+### 1. Principle of Least Privilege
+
+```sql
+-- Create a limited database user for the application
+CREATE LOGIN app_user WITH PASSWORD = 'SecurePassword123!';
+CREATE USER app_user FOR LOGIN app_user;
+
+-- Grant only necessary permissions
+GRANT SELECT, INSERT, UPDATE ON Users TO app_user;
+GRANT SELECT ON Products TO app_user;
+
+-- Deny dangerous permissions
+DENY CREATE TABLE TO app_user;
+DENY DROP TO app_user;
+DENY ALTER TO app_user;
+```
+
+### 2. Connection String Security
+
+```csharp
+// Use connection string encryption
+public class SecureConnectionString
+{
+    public static string GetConnectionString()
+    {
+        var builder = new SqlConnectionStringBuilder
+        {
+            DataSource = Environment.GetEnvironmentVariable("DB_SERVER"),
+            InitialCatalog = Environment.GetEnvironmentVariable("DB_NAME"),
+            UserID = Environment.GetEnvironmentVariable("DB_USER"),
+            Password = Environment.GetEnvironmentVariable("DB_PASSWORD"),
+            Encrypt = true,
+            TrustServerCertificate = false,
+            ConnectTimeout = 30,
+            CommandTimeout = 300
+        };
+        
+        return builder.ConnectionString;
+    }
+}
+```
+
+### 3. Query Monitoring and Logging
+
+```csharp
+public class QueryLogger : IInterceptor
+{
+    public async ValueTask<InterceptionResult<DbDataReader>> ReaderExecutingAsync(
+        DbCommand command,
+        CommandEventData eventData,
+        InterceptionResult<DbDataReader> result,
+        CancellationToken cancellationToken = default)
+    {
+        // Log suspicious query patterns
+        if (ContainsSuspiciousPatterns(command.CommandText))
+        {
+            LogSuspiciousQuery(command.CommandText, eventData.Context?.GetType().Name);
+        }
+        
+        return result;
+    }
+    
+    private bool ContainsSuspiciousPatterns(string query)
+    {
+        var suspiciousPatterns = new[]
+        {
+            "DROP TABLE", "DELETE FROM", "TRUNCATE", "ALTER TABLE",
+            "EXEC", "EXECUTE", "xp_", "sp_password", "1=1", "OR 1=1"
+        };
+        
+        return suspiciousPatterns.Any(pattern => 
+            query.ToUpper().Contains(pattern.ToUpper()));
+    }
+}
+```
+
+## Testing for SQL Injection Vulnerabilities
+
+### 1. Manual Testing
+
+Common test inputs:
+- `' OR '1'='1`
+- `'; DROP TABLE Users; --`
+- `' UNION SELECT * FROM sys.tables --`
+- `admin'/**/OR/**/1=1#`
+
+### 2. Automated Security Testing
+
+```csharp
+[Test]
+public void TestSQLInjectionResistance()
+{
+    var maliciousInputs = new[]
+    {
+        "' OR '1'='1",
+        "'; DROP TABLE Users; --",
+        "' UNION SELECT password FROM Users --",
+        "admin'; EXEC xp_cmdshell('dir'); --"
+    };
+    
+    foreach (var input in maliciousInputs)
+    {
+        // Should not throw exceptions or return unexpected results
+        Assert.DoesNotThrow(() => 
+        {
+            var result = _userService.GetUser(input, "password");
+            Assert.IsNull(result); // Should not find any user
+        });
+    }
+}
+```
+
+## Modern Framework Protection
+
+### Entity Framework Core
+```csharp
+// EF Core automatically parameterizes queries
+var users = context.Users
+    .Where(u => u.Username == userInput) // Automatically parameterized
+    .ToList();
+
+// Raw SQL still needs parameters
+var users = context.Users
+    .FromSqlRaw("SELECT * FROM Users WHERE Username = {0}", userInput)
+    .ToList();
+```
+
+### Dapper with Parameters
+```csharp
+public User GetUser(string username)
+{
+    using var connection = new SqlConnection(connectionString);
+    return connection.QueryFirstOrDefault<User>(
+        "SELECT * FROM Users WHERE Username = @Username",
+        new { Username = username }
+    );
+}
+```
+
+## Best Practices Summary
+
+1. **Always use parameterized queries** or ORM methods
+2. **Validate and sanitize all input** on both client and server
+3. **Use stored procedures** when appropriate
+4. **Implement least privilege** database access
+5. **Regular security audits** and penetration testing
+6. **Keep frameworks updated** to latest security patches
+7. **Monitor database activity** for suspicious patterns
+8. **Use connection string encryption** and secure configuration
+
+## Conclusion
+
+SQL injection prevention requires a multi-layered approach combining secure coding practices, proper input validation, and robust database security. By implementing these techniques consistently across your application, you can effectively protect against SQL injection attacks while maintaining application performance and functionality.
+
+Remember: **Never trust user input** and always assume that any data coming from outside your application could be malicious.
