@@ -2,7 +2,6 @@
 
 A modern, responsive portfolio website built with Next.js and Once UI, showcasing my software engineering projects and experience.
 
-![Michael Plymire Portfolio](https://demo.magic-portfolio.com/images/og/home.jpg)
 
 ## **About**
 
