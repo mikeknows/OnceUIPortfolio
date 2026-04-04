@@ -34,7 +34,11 @@
 .content {
     gap: 4px;
     padding: 24px;
-    padding-bottom: 96px;
+}
+
+.meta {
+    position: relative;
+    z-index: 3;
 }
 
 .badge {
@@ -58,19 +62,17 @@
     position: absolute;
     left: 24px;
     right: 24px;
+    top: 24px;
     bottom: 20px;
-    max-height: 4.75rem;
     opacity: 0;
     transform: translateY(8px);
     overflow: hidden;
     pointer-events: none;
     z-index: 2;
-    padding-top: 10px;
-    background: linear-gradient(
-        to top,
-        color-mix(in srgb, var(--surface) 92%, var(--brand-alpha-medium) 8%) 68%,
-        transparent 100%
-    );
+    padding-top: 4px;
+    display: -webkit-box;
+    -webkit-line-clamp: 8;
+    -webkit-box-orient: vertical;
     transition:
         opacity var(--transition-micro-medium),
         transform var(--transition-micro-medium),

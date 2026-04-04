@@ -44,24 +44,26 @@ export default function Post({ post, thumbnail, direction }: PostProps) {
                     className={styles.content}
                     fillWidth gap="4"
                     vertical="center">
-                    <Heading
-                        as="h2"
-                        variant="heading-strong-l"
-                        wrap="balance">
-                        {post.metadata.title}
-                    </Heading>
-                    <Text
-                        className={styles.date}
-                        variant="label-default-s"
-                        onBackground="neutral-weak">
-                        {formatDate(post.metadata.publishedAt, false)}
-                    </Text>
-                    { post.metadata.tag &&
-                        <Tag
-                            className={`mt-12 ${styles.badge}`}
-                            label={post.metadata.tag}
-                            variant="neutral" />
-                    }
+                    <Column className={styles.meta} fillWidth gap="4">
+                        <Heading
+                            as="h2"
+                            variant="heading-strong-l"
+                            wrap="balance">
+                            {post.metadata.title}
+                        </Heading>
+                        <Text
+                            className={styles.date}
+                            variant="label-default-s"
+                            onBackground="neutral-weak">
+                            {formatDate(post.metadata.publishedAt, false)}
+                        </Text>
+                        { post.metadata.tag &&
+                            <Tag
+                                className={`mt-12 ${styles.badge}`}
+                                label={post.metadata.tag}
+                                variant="neutral" />
+                        }
+                    </Column>
                     <Text
                         className={styles.summary}
                         variant="body-default-s"
