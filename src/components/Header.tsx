@@ -7,6 +7,7 @@ import { Fade, Flex, Line, ToggleButton } from "@once-ui-system/core";
 
 import { routes, display, person, about, blog, work, gallery } from "@/resources";
 import { ThemeToggle } from "./ThemeToggle";
+import { LiveVisitors } from "./LiveVisitors";
 import styles from "./Header.module.scss";
 
 type TimeDisplayProps = {
@@ -61,7 +62,11 @@ export const Header = () => {
         data-border="rounded"
       >
         <Flex paddingLeft="12" fillWidth vertical="center" textVariant="body-default-s">
-          {display.location && <Flex hide="s">{person.location}</Flex>}
+          {display.location && (
+            <Flex hide="s">
+              <LiveVisitors />
+            </Flex>
+          )}
         </Flex>
         <Flex fillWidth horizontal="center">
           <Flex
