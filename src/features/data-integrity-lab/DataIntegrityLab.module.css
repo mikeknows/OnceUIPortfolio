@@ -1,0 +1,178 @@
+.page {
+  width: min(1200px, 100%);
+  display: grid;
+  gap: 1rem;
+}
+
+.hero,
+.panel,
+.card,
+.tableWrap,
+.details,
+.why {
+  background: color-mix(in srgb, var(--neutral-background-strong) 40%, transparent);
+  border: 1px solid var(--neutral-alpha-medium);
+  border-radius: 14px;
+  padding: 1rem;
+  backdrop-filter: blur(8px);
+}
+
+.hero h1 {
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  margin: 0;
+}
+
+.hero p {
+  color: var(--neutral-on-background-weak);
+}
+
+.ingestGrid,
+.summaryGrid,
+.detailGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 0.75rem;
+}
+
+.panel:first-child {
+  grid-column: span 4;
+}
+
+.panel:last-child {
+  grid-column: span 8;
+}
+
+.textarea {
+  width: 100%;
+  min-height: 180px;
+  border-radius: 10px;
+  border: 1px solid var(--neutral-alpha-medium);
+  background: rgba(15, 23, 42, 0.6);
+  color: white;
+  padding: 0.75rem;
+}
+
+.buttonRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.page button,
+.page select,
+.search,
+.page input[type="file"] {
+  border-radius: 10px;
+  border: 1px solid var(--neutral-alpha-medium);
+  background: rgba(15, 23, 42, 0.7);
+  color: white;
+  padding: 0.55rem 0.7rem;
+}
+
+.secondary {
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.error {
+  color: #fca5a5;
+}
+
+.card {
+  grid-column: span 2;
+}
+
+.card p {
+  margin: 0;
+  color: var(--neutral-on-background-weak);
+}
+
+.card h3 {
+  margin: 0.3rem 0;
+}
+
+.tableToolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.search {
+  min-width: 240px;
+  flex: 1;
+}
+
+.responsiveArea {
+  overflow-x: auto;
+}
+
+.responsiveArea table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.responsiveArea th,
+.responsiveArea td {
+  padding: 0.65rem;
+  border-bottom: 1px solid var(--neutral-alpha-medium);
+  text-align: left;
+}
+
+.responsiveArea tbody tr {
+  cursor: pointer;
+  transition: background 180ms ease;
+}
+
+.responsiveArea tbody tr:hover,
+.activeRow {
+  background: rgba(59, 130, 246, 0.13);
+}
+
+.badge,
+.decision {
+  font-size: 0.8rem;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.decisionNew { background: rgba(16, 185, 129, 0.2); }
+.decisionUpdate { background: rgba(59, 130, 246, 0.2); }
+.decisionManual { background: rgba(245, 158, 11, 0.2); }
+.decisionReject { background: rgba(239, 68, 68, 0.2); }
+
+.explanation {
+  margin-top: 0;
+  color: var(--neutral-on-background-weak);
+}
+
+.panelLite {
+  border: 1px solid var(--neutral-alpha-medium);
+  border-radius: 12px;
+  padding: 0.75rem;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.panelLite pre {
+  margin: 0;
+  white-space: pre-wrap;
+  font-size: 0.8rem;
+}
+
+.why {
+  animation: riseIn 400ms ease-out;
+}
+
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 920px) {
+  .panel:first-child,
+  .panel:last-child,
+  .card {
+    grid-column: span 12;
+  }
+}
