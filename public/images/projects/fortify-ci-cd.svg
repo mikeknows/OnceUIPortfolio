@@ -1,0 +1,35 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0B1220"/>
+      <stop offset="1" stop-color="#0F1F3A"/>
+    </linearGradient>
+    <linearGradient id="pipe" x1="300" y1="0" x2="1300" y2="0" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22D3EE"/>
+      <stop offset="1" stop-color="#A78BFA"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" rx="36" fill="url(#bg)"/>
+  <text x="120" y="150" fill="#E2E8F0" font-family="Arial, sans-serif" font-size="52" font-weight="700">GitHub Actions + Fortify</text>
+  <text x="120" y="205" fill="#94A3B8" font-family="Arial, sans-serif" font-size="28">CI/CD pipeline with security gates before deployment</text>
+
+  <rect x="120" y="300" width="300" height="130" rx="16" fill="#111827" stroke="#334155"/>
+  <text x="160" y="360" fill="#22C55E" font-family="monospace" font-size="30">build + test</text>
+
+  <rect x="650" y="300" width="300" height="130" rx="16" fill="#111827" stroke="#334155"/>
+  <text x="705" y="360" fill="#F59E0B" font-family="monospace" font-size="30">fortify scan</text>
+
+  <rect x="1180" y="300" width="300" height="130" rx="16" fill="#111827" stroke="#334155"/>
+  <text x="1250" y="360" fill="#60A5FA" font-family="monospace" font-size="30">deploy</text>
+
+  <path d="M430 365H640" stroke="url(#pipe)" stroke-width="12" stroke-linecap="round"/>
+  <path d="M960 365H1170" stroke="url(#pipe)" stroke-width="12" stroke-linecap="round"/>
+
+  <circle cx="520" cy="365" r="12" fill="#A78BFA"/>
+  <circle cx="1060" cy="365" r="12" fill="#A78BFA"/>
+
+  <rect x="120" y="520" width="1360" height="250" rx="20" fill="#0B1324" stroke="#334155"/>
+  <text x="170" y="590" fill="#E2E8F0" font-family="monospace" font-size="28">Security Policy: PASS</text>
+  <text x="170" y="640" fill="#94A3B8" font-family="monospace" font-size="24">Critical: 0   High: 1   Medium: 4</text>
+  <text x="170" y="690" fill="#94A3B8" font-family="monospace" font-size="24">Workflow run: #4821</text>
+</svg>
