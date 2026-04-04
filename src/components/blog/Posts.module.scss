@@ -33,6 +33,8 @@
 
 .content {
     gap: 4px;
+    padding: 24px;
+    padding-bottom: 96px;
 }
 
 .badge {
@@ -56,8 +58,8 @@
     position: absolute;
     left: 24px;
     right: 24px;
-    bottom: 24px;
-    max-height: 5.5rem;
+    bottom: 20px;
+    max-height: 4.75rem;
     opacity: 0;
     transform: translateY(8px);
     overflow: hidden;

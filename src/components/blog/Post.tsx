@@ -43,7 +43,6 @@ export default function Post({ post, thumbnail, direction }: PostProps) {
                     position="relative"
                     className={styles.content}
                     fillWidth gap="4"
-                    padding="24"
                     vertical="center">
                     <Heading
                         as="h2"
