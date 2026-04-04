@@ -23,7 +23,7 @@ export default function Post({ post, thumbnail, direction }: PostProps) {
                 transition="micro-medium"
                 direction={direction}
                 radius="l"
-                className={styles.hover}
+                className={styles.card}
                 mobileDirection="column"
                 fillWidth>
                 {post.metadata.image && thumbnail && (
@@ -41,6 +41,7 @@ export default function Post({ post, thumbnail, direction }: PostProps) {
                 )}
                 <Column
                     position="relative"
+                    className={styles.content}
                     fillWidth gap="4"
                     padding="24"
                     vertical="center">
@@ -61,6 +62,12 @@ export default function Post({ post, thumbnail, direction }: PostProps) {
                             label={post.metadata.tag}
                             variant="neutral" />
                     }
+                    <Text
+                        className={styles.summary}
+                        variant="body-default-s"
+                        onBackground="neutral-medium">
+                        {post.metadata.summary}
+                    </Text>
                 </Column>
             </Flex>
         </SmartLink>

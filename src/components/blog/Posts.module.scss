@@ -1,12 +1,56 @@
-.hover {
-    border: 1px solid var(--static-transparent);
+.card {
+    border: 1px solid var(--neutral-alpha-weak);
+    outline: 1px solid transparent;
+    outline-offset: 0;
+    background: color-mix(in srgb, var(--surface) 92%, var(--neutral-alpha-medium) 8%);
+    transition:
+        border-color var(--transition-micro-medium),
+        outline-color var(--transition-micro-medium),
+        outline-offset var(--transition-micro-medium),
+        transform var(--transition-micro-medium),
+        box-shadow var(--transition-micro-medium),
+        background-color var(--transition-micro-medium);
 
     &:hover {
-        border: 1px solid var(--neutral-alpha-medium);
+        border-color: var(--brand-alpha-medium);
+        outline-color: var(--brand-alpha-strong);
+        outline-offset: 2px;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px var(--neutral-alpha-weak);
+        background: color-mix(in srgb, var(--surface) 86%, var(--brand-alpha-medium) 14%);
     }
 }
 
 .image {
-    transition: var(--transition-micro-medium);
+    transition: transform var(--transition-micro-medium), filter var(--transition-micro-medium);
     transform: scale(1);
+}
+
+.card:hover .image {
+    transform: scale(1.02);
+    filter: saturate(1.05);
+}
+
+.content {
+    gap: 4px;
+}
+
+.summary {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(4px);
+    overflow: hidden;
+    transition:
+        max-height var(--transition-micro-medium),
+        opacity var(--transition-micro-medium),
+        transform var(--transition-micro-medium),
+        margin-top var(--transition-micro-medium);
+    margin-top: 0;
+}
+
+.card:hover .summary {
+    max-height: 6rem;
+    opacity: 1;
+    transform: translateY(0);
+    margin-top: 8px;
 }
