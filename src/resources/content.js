@@ -53,8 +53,8 @@ const home = {
   headline: <>I build secure full-stack apps with C#, SQL, and React</>,
   featured: {
     display: true,
-    title: <>Featured project: <strong className="ml-4">E-Commerce Platform</strong></>,
-    href: "/work/ecommerce-platform",
+    title: <>Featured project: <strong className="ml-4">Dynamic SQL Grid</strong></>,
+    href: "/work/dynamic-sql-grid",
   },
   subline: (
     <>
