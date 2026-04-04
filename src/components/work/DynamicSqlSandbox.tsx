@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { CSSProperties, useMemo, useState } from "react";
 
 const DEFAULT_SQL = `CREATE TABLE employees (
   id INT PRIMARY KEY,
@@ -9,6 +9,10 @@ const DEFAULT_SQL = `CREATE TABLE employees (
   department VARCHAR(50),
   salary DECIMAL(10,2)
 );`;
+
+const DEFAULT_ROWS = [
+  { id: "1", first_name: "Avery", last_name: "Nguyen", department: "Data", salary: "92000" },
+];
 
 const RESERVED = new Set(["primary", "foreign", "constraint", "key", "unique", "index", "check"]);
 
@@ -33,14 +37,29 @@ function createEmptyRow(columns: string[]): Row {
   }, {});
 }
 
-export function DynamicSqlSandbox() {
-  const [sql, setSql] = useState(DEFAULT_SQL);
-  const [columns, setColumns] = useState<string[]>(() => parseColumns(DEFAULT_SQL));
-  const [rows, setRows] = useState<Row[]>([
-    { id: "1", first_name: "Avery", last_name: "Nguyen", department: "Data", salary: "92000" },
-  ]);
+const buttonStyle: CSSProperties = {
+  padding: "10px 14px",
+  borderRadius: 10,
+  border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 70%, #7c8aff 30%)",
+  background: "linear-gradient(180deg, rgba(124,138,255,0.18), rgba(124,138,255,0.08))",
+  color: "inherit",
+  fontWeight: 600,
+  cursor: "pointer",
+};
 
-  const parseError = useMemo(() => (columns.length ? "" : "Could not detect columns. Add SQL fields inside CREATE TABLE (...)."), [columns]);
+export function DynamicSqlSandbox() {
+  const initialColumns = useMemo(() => parseColumns(DEFAULT_SQL), []);
+
+  const [sql, setSql] = useState(DEFAULT_SQL);
+  const [columns, setColumns] = useState<string[]>(initialColumns);
+  const [rows, setRows] = useState<Row[]>(DEFAULT_ROWS);
+  const [showColumnModal, setShowColumnModal] = useState(false);
+  const [newColumn, setNewColumn] = useState("new_column");
+
+  const parseError = useMemo(
+    () => (columns.length ? "" : "Could not detect columns. Add SQL fields inside CREATE TABLE (...)."),
+    [columns],
+  );
 
   const syncRowsToColumns = (nextColumns: string[]) => {
     setRows((prev) => {
@@ -61,8 +80,16 @@ export function DynamicSqlSandbox() {
     syncRowsToColumns(nextColumns);
   };
 
-  const handleAddColumn = () => {
-    const name = window.prompt("New column name (snake_case recommended):", "new_column")?.trim().toLowerCase();
+  const handleReset = () => {
+    setSql(DEFAULT_SQL);
+    setColumns(initialColumns);
+    setRows(DEFAULT_ROWS);
+    setNewColumn("new_column");
+    setShowColumnModal(false);
+  };
+
+  const handleConfirmAddColumn = () => {
+    const name = newColumn.trim().toLowerCase();
     if (!name || columns.includes(name)) return;
 
     const nextColumns = [...columns, name];
@@ -71,6 +98,8 @@ export function DynamicSqlSandbox() {
 
     const insert = `\nALTER TABLE employees ADD COLUMN ${name} VARCHAR(255);`;
     setSql((prev) => prev.trimEnd() + insert);
+    setShowColumnModal(false);
+    setNewColumn("new_column");
   };
 
   const handleAddRow = () => {
@@ -79,30 +108,77 @@ export function DynamicSqlSandbox() {
   };
 
   return (
-    <div style={{ border: "1px solid var(--neutral-alpha-medium)", borderRadius: 12, overflow: "hidden", marginTop: 12, marginBottom: 20 }}>
-      <div style={{ padding: 16, background: "var(--neutral-alpha-weak)", borderBottom: "1px solid var(--neutral-alpha-medium)" }}>
-        <p style={{ margin: "0 0 8px", fontWeight: 600 }}>Interactive Dynamic SQL Sandbox</p>
-        <p style={{ margin: "0 0 12px", opacity: 0.8, fontSize: 14 }}>Edit SQL or use quick actions, then apply changes to re-map the grid schema.</p>
+    <div
+      style={{
+        border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 75%, #7c8aff 25%)",
+        borderRadius: 16,
+        overflow: "hidden",
+        marginTop: 12,
+        marginBottom: 20,
+        boxShadow: "0 14px 34px rgba(14,17,33,0.16)",
+        background: "linear-gradient(180deg, rgba(124,138,255,0.08), rgba(124,138,255,0.02))",
+      }}
+    >
+      <div style={{ padding: 18, borderBottom: "1px solid var(--neutral-alpha-medium)" }}>
+        <p style={{ margin: "0 0 8px", fontWeight: 700, fontSize: 16 }}>Interactive Dynamic SQL Sandbox</p>
+        <p style={{ margin: "0 0 12px", opacity: 0.85, fontSize: 14 }}>
+          Edit SQL or use quick actions, then apply changes to re-map the grid schema.
+        </p>
         <textarea
           value={sql}
           onChange={(event) => setSql(event.target.value)}
           spellCheck={false}
-          style={{ width: "100%", minHeight: 150, fontFamily: "monospace", fontSize: 13, padding: 10, borderRadius: 8, border: "1px solid var(--neutral-alpha-medium)" }}
+          style={{
+            width: "100%",
+            minHeight: 160,
+            fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
+            fontSize: 13,
+            lineHeight: 1.5,
+            padding: 12,
+            borderRadius: 12,
+            border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 80%, #7c8aff 20%)",
+            background: "rgba(15, 18, 34, 0.42)",
+            color: "inherit",
+          }}
         />
-        <div style={{ display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap" }}>
-          <button onClick={handleApplySql} style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid var(--neutral-alpha-medium)" }}>Apply SQL Schema</button>
-          <button onClick={handleAddColumn} style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid var(--neutral-alpha-medium)" }}>+ Add Column</button>
-          <button onClick={handleAddRow} style={{ padding: "8px 12px", borderRadius: 8, border: "1px solid var(--neutral-alpha-medium)" }}>+ Add Row</button>
+        <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+          <button onClick={handleApplySql} style={buttonStyle}>
+            Apply SQL Schema
+          </button>
+          <button onClick={() => setShowColumnModal(true)} style={buttonStyle}>
+            + Add Column
+          </button>
+          <button onClick={handleAddRow} style={buttonStyle}>
+            + Add Row
+          </button>
+          <button
+            onClick={handleReset}
+            style={{
+              ...buttonStyle,
+              background: "linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05))",
+            }}
+          >
+            Reset Sandbox
+          </button>
         </div>
-        {parseError && <p style={{ color: "#d14343", marginTop: 8, marginBottom: 0, fontSize: 13 }}>{parseError}</p>}
+        {parseError && <p style={{ color: "#ff7171", marginTop: 8, marginBottom: 0, fontSize: 13 }}>{parseError}</p>}
       </div>
 
       <div style={{ overflowX: "auto", padding: 12 }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 560 }}>
+        <table style={{ width: "100%", borderCollapse: "separate", borderSpacing: 0, minWidth: 560 }}>
           <thead>
             <tr>
               {columns.map((column) => (
-                <th key={column} style={{ textAlign: "left", padding: 10, borderBottom: "1px solid var(--neutral-alpha-medium)", textTransform: "capitalize" }}>
+                <th
+                  key={column}
+                  style={{
+                    textAlign: "left",
+                    padding: "10px 12px",
+                    borderBottom: "1px solid var(--neutral-alpha-medium)",
+                    textTransform: "capitalize",
+                    background: "rgba(124,138,255,0.12)",
+                  }}
+                >
                   {column.replace(/_/g, " ")}
                 </th>
               ))}
@@ -117,10 +193,19 @@ export function DynamicSqlSandbox() {
                       value={row[column] ?? ""}
                       onChange={(event) => {
                         const value = event.target.value;
-                        setRows((prev) => prev.map((item, index) => (index === rowIndex ? { ...item, [column]: value } : item)));
+                        setRows((prev) =>
+                          prev.map((item, index) => (index === rowIndex ? { ...item, [column]: value } : item)),
+                        );
                       }}
                       placeholder={`Enter ${column}`}
-                      style={{ width: "100%", padding: "6px 8px", borderRadius: 6, border: "1px solid var(--neutral-alpha-medium)" }}
+                      style={{
+                        width: "100%",
+                        padding: "8px 10px",
+                        borderRadius: 10,
+                        border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 80%, #7c8aff 20%)",
+                        background: "rgba(255,255,255,0.04)",
+                        color: "inherit",
+                      }}
                     />
                   </td>
                 ))}
@@ -129,6 +214,64 @@ export function DynamicSqlSandbox() {
           </tbody>
         </table>
       </div>
+
+      {showColumnModal && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: 1000,
+            background: "rgba(8, 10, 20, 0.55)",
+            backdropFilter: "blur(5px)",
+            display: "grid",
+            placeItems: "center",
+            padding: 16,
+          }}
+        >
+          <div
+            style={{
+              width: "min(440px, 100%)",
+              borderRadius: 14,
+              border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 70%, #7c8aff 30%)",
+              background: "linear-gradient(180deg, #141931, #0f1327)",
+              boxShadow: "0 24px 60px rgba(8, 10, 20, 0.45)",
+              padding: 16,
+            }}
+          >
+            <p style={{ margin: "0 0 8px", fontWeight: 700 }}>Add a new SQL column</p>
+            <p style={{ margin: "0 0 12px", fontSize: 13, opacity: 0.82 }}>
+              Choose a column name and it will be appended to the schema and mapped into the grid.
+            </p>
+            <input
+              value={newColumn}
+              onChange={(event) => setNewColumn(event.target.value)}
+              placeholder="new_column"
+              style={{
+                width: "100%",
+                padding: "10px 12px",
+                borderRadius: 10,
+                border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 75%, #7c8aff 25%)",
+                background: "rgba(255,255,255,0.05)",
+                color: "inherit",
+              }}
+            />
+            <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 12 }}>
+              <button
+                onClick={() => setShowColumnModal(false)}
+                style={{
+                  ...buttonStyle,
+                  background: "rgba(255,255,255,0.08)",
+                }}
+              >
+                Cancel
+              </button>
+              <button onClick={handleConfirmAddColumn} style={buttonStyle}>
+                Add Column
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
