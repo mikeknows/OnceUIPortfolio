@@ -2,6 +2,7 @@
 
 import {
   AvatarGroup,
+  Badge,
   Carousel,
   Column,
   Flex,
@@ -64,13 +65,17 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
             )}
             <Flex gap="24" wrap>
               {content?.trim() && (
-                <SmartLink
-                  suffixIcon="arrowRight"
-                  style={{ margin: "0", width: "fit-content" }}
+                <Badge
+                  background="neutral-alpha-weak"
+                  paddingX="12"
+                  paddingY="4"
+                  onBackground="neutral-strong"
+                  textVariant="label-default-s"
+                  arrow={false}
                   href={href}
                 >
-                  <Text variant="body-default-s">Read case study</Text>
-                </SmartLink>
+                  <Text variant="label-default-s">Read case study</Text>
+                </Badge>
               )}
               {link && (
                 <SmartLink
