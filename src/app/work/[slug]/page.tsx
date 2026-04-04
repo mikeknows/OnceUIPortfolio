@@ -93,6 +93,7 @@ export default async function Project({
         </Flex>
         <CustomMDX source={post.content} />
       </Column>
+      <CommentsSection entityType="work" slug={post.slug} />
       <ScrollToHash />
     </Column>
   );
