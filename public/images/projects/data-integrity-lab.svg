@@ -1,0 +1,65 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="120" y1="60" x2="1480" y2="860" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0A1124"/>
+      <stop offset="0.4" stop-color="#0E1F45"/>
+      <stop offset="1" stop-color="#090E1B"/>
+    </linearGradient>
+    <linearGradient id="glow" x1="330" y1="160" x2="1260" y2="780" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#06B6D4"/>
+      <stop offset="0.55" stop-color="#3B82F6"/>
+      <stop offset="1" stop-color="#8B5CF6"/>
+    </linearGradient>
+    <radialGradient id="spot" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(1180 220) rotate(133.876) scale(460 380)">
+      <stop stop-color="#22D3EE" stop-opacity="0.45"/>
+      <stop offset="1" stop-color="#22D3EE" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="blur" x="0" y="0" width="1600" height="900" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="60"/>
+    </filter>
+  </defs>
+
+  <rect width="1600" height="900" rx="24" fill="url(#bg)"/>
+  <ellipse cx="1180" cy="220" rx="420" ry="310" fill="url(#spot)"/>
+  <g opacity="0.35" filter="url(#blur)">
+    <circle cx="260" cy="660" r="120" fill="#0EA5E9"/>
+    <circle cx="620" cy="220" r="90" fill="#A855F7"/>
+  </g>
+
+  <rect x="150" y="120" width="1300" height="660" rx="24" fill="#0B1225" stroke="rgba(125,211,252,0.4)"/>
+
+  <rect x="190" y="170" width="520" height="570" rx="16" fill="#0D1A34" stroke="rgba(99,102,241,0.45)"/>
+  <rect x="230" y="220" width="440" height="54" rx="12" fill="#111F3E"/>
+  <rect x="230" y="292" width="440" height="54" rx="12" fill="#111F3E"/>
+  <rect x="230" y="364" width="440" height="54" rx="12" fill="#111F3E"/>
+  <rect x="230" y="436" width="440" height="54" rx="12" fill="#111F3E"/>
+  <rect x="230" y="508" width="440" height="54" rx="12" fill="#111F3E"/>
+  <rect x="230" y="580" width="440" height="54" rx="12" fill="#111F3E"/>
+
+  <g>
+    <rect x="780" y="170" width="620" height="300" rx="18" fill="#0D1A34" stroke="rgba(34,211,238,0.55)"/>
+    <path d="M820 406C850 360 905 334 962 338C1020 341 1067 377 1112 376C1164 374 1214 328 1280 338C1324 345 1360 367 1380 390" stroke="url(#glow)" stroke-width="8" stroke-linecap="round"/>
+    <circle cx="962" cy="338" r="9" fill="#22D3EE"/>
+    <circle cx="1112" cy="376" r="9" fill="#60A5FA"/>
+    <circle cx="1280" cy="338" r="9" fill="#A78BFA"/>
+  </g>
+
+  <g>
+    <rect x="780" y="500" width="300" height="240" rx="16" fill="#0D1A34" stroke="rgba(16,185,129,0.45)"/>
+    <rect x="814" y="544" width="232" height="18" rx="9" fill="#134E4A"/>
+    <rect x="814" y="578" width="190" height="18" rx="9" fill="#134E4A"/>
+    <rect x="814" y="612" width="220" height="18" rx="9" fill="#134E4A"/>
+    <rect x="814" y="646" width="170" height="18" rx="9" fill="#134E4A"/>
+  </g>
+
+  <g>
+    <rect x="1100" y="500" width="300" height="240" rx="16" fill="#0D1A34" stroke="rgba(244,114,182,0.45)"/>
+    <rect x="1134" y="544" width="232" height="18" rx="9" fill="#4A1D3B"/>
+    <rect x="1134" y="578" width="190" height="18" rx="9" fill="#4A1D3B"/>
+    <rect x="1134" y="612" width="220" height="18" rx="9" fill="#4A1D3B"/>
+    <rect x="1134" y="646" width="170" height="18" rx="9" fill="#4A1D3B"/>
+  </g>
+
+  <text x="230" y="130" fill="#7DD3FC" font-family="Inter, Segoe UI, sans-serif" font-size="28" font-weight="600">Data Integrity Lab</text>
+  <text x="820" y="215" fill="#93C5FD" font-family="Inter, Segoe UI, sans-serif" font-size="20" font-weight="500">Validation • Matching • Decisioning</text>
+</svg>
