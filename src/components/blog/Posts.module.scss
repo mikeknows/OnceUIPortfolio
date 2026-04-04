@@ -35,6 +35,11 @@
     gap: 4px;
 }
 
+.badge {
+    position: relative;
+    z-index: 3;
+}
+
 .summary {
     position: absolute;
     left: 24px;

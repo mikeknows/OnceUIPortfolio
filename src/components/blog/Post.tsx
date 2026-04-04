@@ -58,7 +58,7 @@ export default function Post({ post, thumbnail, direction }: PostProps) {
                     </Text>
                     { post.metadata.tag &&
                         <Tag
-                            className="mt-12"
+                            className={`mt-12 ${styles.badge}`}
                             label={post.metadata.tag}
                             variant="neutral" />
                     }
