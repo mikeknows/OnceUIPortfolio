@@ -329,7 +329,7 @@ export default function About() {
 
           {githubUsername && (
             <>
-              <Heading as="h2" id="GitHub Repositories" variant="display-strong-s" marginBottom="m">
+              <Heading as="h2" id="GitHub Repositories" variant="display-strong-s" marginTop="xl" marginBottom="m">
                 GitHub Repositories
               </Heading>
               <GitHubRepositories username={githubUsername} />
