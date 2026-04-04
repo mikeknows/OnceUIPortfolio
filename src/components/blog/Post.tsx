@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { Column, Flex, Heading, Media, SmartLink, Tag, Text } from '@once-ui-system/core';
 import styles from './Posts.module.scss';
 import { formatDate } from '@/utils/formatDate';
@@ -11,6 +12,26 @@ interface PostProps {
 }
 
 export default function Post({ post, thumbnail, direction }: PostProps) {
+    const metaRef = useRef<HTMLDivElement>(null);
+    const [metaHeight, setMetaHeight] = useState(0);
+
+    useEffect(() => {
+        if (!metaRef.current) return;
+
+        const node = metaRef.current;
+
+        const updateHeight = () => {
+            setMetaHeight(node.getBoundingClientRect().height);
+        };
+
+        updateHeight();
+
+        const observer = new ResizeObserver(() => updateHeight());
+        observer.observe(node);
+
+        return () => observer.disconnect();
+    }, []);
+
     return (
         <SmartLink
             fillWidth
@@ -42,9 +63,10 @@ export default function Post({ post, thumbnail, direction }: PostProps) {
                 <Column
                     position="relative"
                     className={styles.content}
+                    style={{ '--meta-height': `${metaHeight}px` } as CSSProperties}
                     fillWidth gap="4"
                     vertical="center">
-                    <Column className={styles.meta} fillWidth gap="4">
+                    <Column ref={metaRef} className={styles.meta} fillWidth gap="4">
                         <Heading
                             as="h2"
                             variant="heading-strong-l"
