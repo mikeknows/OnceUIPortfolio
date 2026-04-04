@@ -40,6 +40,18 @@
     z-index: 3;
 }
 
+.date,
+.badge {
+    transition: opacity var(--transition-micro-medium), transform var(--transition-micro-medium);
+}
+
+.card:hover .date,
+.card:hover .badge {
+    opacity: 0;
+    transform: translateY(-4px);
+    pointer-events: none;
+}
+
 .summary {
     position: absolute;
     left: 24px;

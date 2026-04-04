@@ -52,6 +52,7 @@ export default function Post({ post, thumbnail, direction }: PostProps) {
                         {post.metadata.title}
                     </Heading>
                     <Text
+                        className={styles.date}
                         variant="label-default-s"
                         onBackground="neutral-weak">
                         {formatDate(post.metadata.publishedAt, false)}
