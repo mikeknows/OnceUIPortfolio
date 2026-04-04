@@ -50,7 +50,7 @@ const home = {
   label: "Home",
   title: `${person.name}'s Portfolio`,
   description: `Portfolio website showcasing my work as a ${person.role}`,
-  headline: <>I build secure full-stack apps with C#, SQL, and React</>,
+  headline: <>I build reliable web apps that keep your data safe</>,
   featured: {
     display: true,
     title: <>Featured project: <strong className="ml-4">Dynamic SQL Grid</strong></>,
@@ -58,8 +58,8 @@ const home = {
   },
   subline: (
     <>
-      I focus on backend-heavy projects: APIs in C#, data-heavy SQL tools, and CI/CD pipelines that keep releases safe.
-      <br /> Most of my recent work has been around shipping faster without sacrificing security.
+      I build complete products, from the user-facing website to the systems that run behind the scenes.
+      <br /> Lately, I've helped teams release updates faster while protecting customer data and reducing risk.
     </>
   ),
 };

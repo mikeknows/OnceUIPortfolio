@@ -23,7 +23,7 @@ export default function Home() {
         }}
       />
       <Column fillWidth paddingY="24" gap="m">
-        <Column maxWidth="s">
+        <Column maxWidth="m">
           {home.featured.display && (
           <RevealFx fillWidth horizontal="start" paddingTop="16" paddingBottom="32" paddingLeft="12">
             <Badge background="brand-alpha-weak" paddingX="12" paddingY="4" onBackground="neutral-strong" textVariant="label-default-s" arrow={false}
