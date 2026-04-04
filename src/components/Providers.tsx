@@ -2,6 +2,7 @@
 
 import { BorderStyle, ChartMode, ChartVariant, DataThemeProvider, IconProvider, NeutralColor, ScalingSize, Schemes, SolidStyle, SolidType, SurfaceStyle, ThemeProvider, ToastProvider, TransitionStyle } from "@once-ui-system/core";
 import { style, dataStyle } from "../resources";
+import { CommentsProvider } from "./comments/CommentsProvider";
 import { iconLibrary } from "../resources/icons";
 
 export function Providers({ children }: { children: React.ReactNode }) {
@@ -32,7 +33,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         >
         <ToastProvider>
           <IconProvider icons={iconLibrary}>
-            {children}
+            <CommentsProvider>{children}</CommentsProvider>
           </IconProvider>
         </ToastProvider>
       </DataThemeProvider>

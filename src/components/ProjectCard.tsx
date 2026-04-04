@@ -10,9 +10,12 @@ import {
   SmartLink,
   Text,
 } from "@once-ui-system/core";
+import { CommentCount } from "@/components/comments/CommentCount";
+import styles from "./ProjectCard.module.scss";
 
 interface ProjectCardProps {
   href: string;
+  slug: string;
   priority?: boolean;
   images: string[];
   title: string;
@@ -24,6 +27,7 @@ interface ProjectCardProps {
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({
   href,
+  slug,
   images = [],
   title,
   content,
@@ -57,7 +61,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({
         )}
         {(avatars?.length > 0 || description?.trim() || content?.trim()) && (
           <Column flex={7} gap="16">
-            {avatars?.length > 0 && <AvatarGroup avatars={avatars} size="m" reverse />}
+            {avatars?.length > 0 && (
+              <div className={styles.metaRow}>
+                <AvatarGroup avatars={avatars} size="m" reverse />
+                <CommentCount entityType="work" slug={slug} />
+              </div>
+            )}
             {description?.trim() && (
               <Text wrap="balance" variant="body-default-s" onBackground="neutral-weak">
                 {description}

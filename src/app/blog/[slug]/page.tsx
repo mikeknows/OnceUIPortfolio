@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { CustomMDX, ScrollToHash } from "@/components";
+import { CommentsSection } from "@/components/comments/CommentsSection";
 import { Meta, Schema, AvatarGroup, Button, Column, Heading, HeadingNav, Icon, Row, Text } from "@once-ui-system/core";
 import { baseURL, about, blog, person } from "@/resources";
 import { formatDate } from "@/utils/formatDate";
@@ -85,6 +86,7 @@ export default async function Blog({
           <Column as="article" fillWidth>
             <CustomMDX source={post.content} />
           </Column>
+          <CommentsSection entityType="blog" slug={post.slug} />
           <ScrollToHash />
         </Column>
     </Row>
