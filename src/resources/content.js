@@ -50,7 +50,7 @@ const home = {
   label: "Home",
   title: `${person.name}'s Portfolio`,
   description: `Portfolio website showcasing my work as a ${person.role}`,
-  headline: <>Building innovative software solutions</>,
+  headline: <>I build secure full-stack apps with C#, SQL, and React</>,
   featured: {
     display: true,
     title: <>Featured project: <strong className="ml-4">E-Commerce Platform</strong></>,
@@ -58,8 +58,8 @@ const home = {
   },
   subline: (
     <>
-      I'm Michael, a software engineer passionate about creating robust applications and elegant code.
-      <br /> I love solving complex problems and building tools that make a difference.
+      I focus on backend-heavy projects: APIs in C#, data-heavy SQL tools, and CI/CD pipelines that keep releases safe.
+      <br /> Most of my recent work has been around shipping faster without sacrificing security.
     </>
   ),
 };
@@ -85,9 +85,9 @@ const about = {
     title: "Introduction",
     description: (
       <>
-        Michael is a passionate software engineer with expertise in full-stack development. 
-        He specializes in building scalable web applications, working with modern technologies, 
-        and solving complex technical challenges with elegant solutions.
+        I'm a software engineer who spends most of my time in C#, SQL Server, and React.
+        I've worked on API integrations, dynamic data grids, and CI/CD pipelines with Fortify security checks.
+        I like practical engineering: clean code, clear docs, and systems that are easy to maintain.
       </>
     ),
   },
@@ -96,41 +96,32 @@ const about = {
     title: "Work Experience",
     experiences: [
       {
-        company: "Tech Solutions Inc.",
+        company: "Enterprise Product Team",
         timeframe: "2023 - Present",
-        role: "Senior Software Engineer",
+        role: "Software Engineer",
         achievements: [
           <>
-            Led the development of a microservices architecture, improving system scalability by 300% 
-            and reducing deployment time by 60%.
+            Built and maintained C# APIs used by internal and client-facing apps, with a focus on auth, reliability, and clear contracts.
           </>,
           <>
-            Implemented automated testing pipelines, increasing code coverage to 95% and reducing 
-            production bugs by 40%.
+            Implemented GitHub Actions CI/CD with Fortify scans so security issues are caught before deployment.
+          </>,
+          <>
+            Shipped dynamic SQL-driven grid features that reduced custom UI work for new data views.
           </>,
         ],
-        images: [
-          // optional: leave the array empty if you don't want to display images
-          {
-            src: "/images/projects/project-01/cover-01.jpg",
-            alt: "Software Project",
-            width: 16,
-            height: 9,
-          },
-        ],
+        images: [],
       },
       {
-        company: "Innovation Labs",
-        timeframe: "2021 - 2023",
+        company: "Earlier Roles",
+        timeframe: "Before 2023",
         role: "Full Stack Developer",
         achievements: [
           <>
-            Built and deployed multiple web applications using React, Node.js, and PostgreSQL,
-            serving over 10,000 active users.
+            Delivered web features end-to-end across frontend, backend, and database layers.
           </>,
           <>
-            Optimized database queries and implemented caching strategies, reducing API response 
-            times by 50%.
+            Improved query performance and simplified API responses to make UI development faster.
           </>,
         ],
         images: [],
@@ -142,12 +133,12 @@ const about = {
     title: "Studies",
     institutions: [
       {
-        name: "University of Technology",
-        description: <>Studied Computer Science with focus on Software Engineering.</>,
+        name: "Computer Science",
+        description: <>Formal CS training plus hands-on backend and database work.</>,
       },
       {
         name: "Continuous Learning",
-        description: <>Always exploring new technologies, frameworks, and best practices.</>,
+        description: <>I keep sharpening C#, SQL optimization, and secure delivery practices.</>,
       },
     ],
   },
@@ -156,40 +147,18 @@ const about = {
     title: "Technical skills",
     skills: [
       {
-        title: "React & Next.js",
-        description: <>Building modern web applications with React ecosystem and Next.js for optimal performance.</>,
-        // optional: leave the array empty if you don't want to display images
-        images: [
-          {
-            src: "/images/projects/project-01/cover-02.jpg",
-            alt: "React Project",
-            width: 16,
-            height: 9,
-          },
-          {
-            src: "/images/projects/project-01/cover-03.jpg",
-            alt: "Next.js Project",
-            width: 16,
-            height: 9,
-          },
-        ],
+        title: "C# APIs",
+        description: <>Designing REST endpoints, auth flows, and DTO contracts that are easy for frontend teams to consume.</>,
+        images: [],
       },
       {
-        title: "Node.js & Python",
-        description: <>Backend development with Node.js and Python, building robust APIs and microservices.</>,
-        // optional: leave the array empty if you don't want to display images
-        images: [
-          {
-            src: "/images/projects/project-01/cover-04.jpg",
-            alt: "Backend Project",
-            width: 16,
-            height: 9,
-          },
-        ],
+        title: "SQL & Data Grids",
+        description: <>Building dynamic SQL-backed interfaces with sorting, filtering, and performance tuning for large datasets.</>,
+        images: [],
       },
       {
-        title: "Database & Cloud",
-        description: <>Experience with PostgreSQL, MongoDB, and cloud platforms like AWS and Azure.</>,
+        title: "CI/CD & App Security",
+        description: <>Automating builds and releases in GitHub Actions with Fortify scanning and policy-based quality gates.</>,
         images: [],
       },
     ],

@@ -1,0 +1,31 @@
+<svg width="1600" height="900" viewBox="0 0 1600 900" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1600" y2="900" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#111827"/>
+      <stop offset="1" stop-color="#172554"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="900" rx="36" fill="url(#bg)"/>
+  <text x="120" y="130" fill="#E2E8F0" font-family="Arial, sans-serif" font-size="52" font-weight="700">C# API ⇄ Client App</text>
+  <text x="120" y="185" fill="#94A3B8" font-family="Arial, sans-serif" font-size="28">Auth, DTOs, and reliable request/response patterns</text>
+
+  <rect x="120" y="260" width="460" height="460" rx="20" fill="#0B1220" stroke="#334155"/>
+  <text x="170" y="320" fill="#22D3EE" font-family="Arial, sans-serif" font-size="34" font-weight="700">Client (React)</text>
+  <text x="170" y="390" fill="#CBD5E1" font-family="monospace" font-size="24">POST /api/auth/login</text>
+  <text x="170" y="435" fill="#CBD5E1" font-family="monospace" font-size="24">GET /api/users</text>
+  <text x="170" y="480" fill="#CBD5E1" font-family="monospace" font-size="24">Authorization: Bearer ...</text>
+
+  <rect x="1020" y="260" width="460" height="460" rx="20" fill="#0B1220" stroke="#334155"/>
+  <text x="1070" y="320" fill="#60A5FA" font-family="Arial, sans-serif" font-size="34" font-weight="700">API (.NET)</text>
+  <text x="1070" y="390" fill="#CBD5E1" font-family="monospace" font-size="24">[Authorize]</text>
+  <text x="1070" y="435" fill="#CBD5E1" font-family="monospace" font-size="24">UserDto[] response</text>
+  <text x="1070" y="480" fill="#CBD5E1" font-family="monospace" font-size="24">Validation + error handling</text>
+
+  <path d="M620 430H980" stroke="#34D399" stroke-width="12" stroke-linecap="round"/>
+  <polygon points="1000,430 960,405 960,455" fill="#34D399"/>
+  <path d="M980 530H620" stroke="#F59E0B" stroke-width="12" stroke-linecap="round"/>
+  <polygon points="600,530 640,505 640,555" fill="#F59E0B"/>
+
+  <text x="690" y="400" fill="#86EFAC" font-family="monospace" font-size="24">Request JSON</text>
+  <text x="700" y="575" fill="#FCD34D" font-family="monospace" font-size="24">Response DTO</text>
+</svg>
