@@ -36,21 +36,31 @@
 }
 
 .summary {
-    max-height: 0;
+    position: absolute;
+    left: 24px;
+    right: 24px;
+    bottom: 24px;
+    max-height: 5.5rem;
     opacity: 0;
-    transform: translateY(4px);
+    transform: translateY(8px);
     overflow: hidden;
+    pointer-events: none;
+    z-index: 2;
+    padding-top: 10px;
+    background: linear-gradient(
+        to top,
+        color-mix(in srgb, var(--surface) 92%, var(--brand-alpha-medium) 8%) 68%,
+        transparent 100%
+    );
     transition:
-        max-height var(--transition-micro-medium),
         opacity var(--transition-micro-medium),
         transform var(--transition-micro-medium),
-        margin-top var(--transition-micro-medium);
-    margin-top: 0;
+        filter var(--transition-micro-medium);
+    filter: blur(1px);
 }
 
 .card:hover .summary {
-    max-height: 6rem;
     opacity: 1;
     transform: translateY(0);
-    margin-top: 8px;
+    filter: blur(0);
 }
