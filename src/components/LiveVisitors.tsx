@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 const HEARTBEAT_INTERVAL_MS = 15000;
 
@@ -19,9 +19,17 @@ const getVisitorId = () => {
 
 export const LiveVisitors = () => {
   const [visitorCount, setVisitorCount] = useState<number | null>(null);
-  const visitorId = useMemo(() => getVisitorId(), []);
+  const [visitorId, setVisitorId] = useState<string | null>(null);
 
   useEffect(() => {
+    setVisitorId(getVisitorId());
+  }, []);
+
+  useEffect(() => {
+    if (!visitorId) {
+      return;
+    }
+
     const eventSource = new EventSource(`/api/live-visitors?visitorId=${visitorId}`);
 
     eventSource.onmessage = (event) => {
