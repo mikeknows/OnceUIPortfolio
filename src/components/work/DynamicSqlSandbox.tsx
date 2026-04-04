@@ -40,8 +40,8 @@ function createEmptyRow(columns: string[]): Row {
 const buttonStyle: CSSProperties = {
   padding: "10px 14px",
   borderRadius: 10,
-  border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 70%, #7c8aff 30%)",
-  background: "linear-gradient(180deg, rgba(124,138,255,0.18), rgba(124,138,255,0.08))",
+  border: "1px solid var(--neutral-alpha-medium)",
+  background: "var(--neutral-alpha-weak)",
   color: "inherit",
   fontWeight: 600,
   cursor: "pointer",
@@ -110,13 +110,13 @@ export function DynamicSqlSandbox() {
   return (
     <div
       style={{
-        border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 75%, #7c8aff 25%)",
+        border: "1px solid var(--neutral-alpha-medium)",
         borderRadius: 16,
         overflow: "hidden",
         marginTop: 12,
         marginBottom: 20,
-        boxShadow: "0 14px 34px rgba(14,17,33,0.16)",
-        background: "linear-gradient(180deg, rgba(124,138,255,0.08), rgba(124,138,255,0.02))",
+        boxShadow: "0 10px 26px rgba(14,17,33,0.10)",
+        background: "var(--page-background)",
       }}
     >
       <div style={{ padding: 18, borderBottom: "1px solid var(--neutral-alpha-medium)" }}>
@@ -136,8 +136,8 @@ export function DynamicSqlSandbox() {
             lineHeight: 1.5,
             padding: 12,
             borderRadius: 12,
-            border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 80%, #7c8aff 20%)",
-            background: "rgba(15, 18, 34, 0.42)",
+            border: "1px solid var(--neutral-alpha-medium)",
+            background: "var(--page-background)",
             color: "inherit",
           }}
         />
@@ -155,7 +155,7 @@ export function DynamicSqlSandbox() {
             onClick={handleReset}
             style={{
               ...buttonStyle,
-              background: "linear-gradient(180deg, rgba(255,255,255,0.14), rgba(255,255,255,0.05))",
+              background: "var(--neutral-alpha-weak)",
             }}
           >
             Reset Sandbox
@@ -176,7 +176,7 @@ export function DynamicSqlSandbox() {
                     padding: "10px 12px",
                     borderBottom: "1px solid var(--neutral-alpha-medium)",
                     textTransform: "capitalize",
-                    background: "rgba(124,138,255,0.12)",
+                    background: "var(--neutral-alpha-weak)",
                   }}
                 >
                   {column.replace(/_/g, " ")}
@@ -202,8 +202,8 @@ export function DynamicSqlSandbox() {
                         width: "100%",
                         padding: "8px 10px",
                         borderRadius: 10,
-                        border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 80%, #7c8aff 20%)",
-                        background: "rgba(255,255,255,0.04)",
+                        border: "1px solid var(--neutral-alpha-medium)",
+                        background: "var(--page-background)",
                         color: "inherit",
                       }}
                     />
@@ -221,7 +221,7 @@ export function DynamicSqlSandbox() {
             position: "fixed",
             inset: 0,
             zIndex: 1000,
-            background: "rgba(8, 10, 20, 0.55)",
+            background: "rgba(17, 20, 30, 0.35)",
             backdropFilter: "blur(5px)",
             display: "grid",
             placeItems: "center",
@@ -232,9 +232,9 @@ export function DynamicSqlSandbox() {
             style={{
               width: "min(440px, 100%)",
               borderRadius: 14,
-              border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 70%, #7c8aff 30%)",
-              background: "linear-gradient(180deg, #141931, #0f1327)",
-              boxShadow: "0 24px 60px rgba(8, 10, 20, 0.45)",
+              border: "1px solid var(--neutral-alpha-medium)",
+              background: "var(--page-background)",
+              boxShadow: "0 18px 44px rgba(8, 10, 20, 0.20)",
               padding: 16,
             }}
           >
@@ -250,8 +250,8 @@ export function DynamicSqlSandbox() {
                 width: "100%",
                 padding: "10px 12px",
                 borderRadius: 10,
-                border: "1px solid color-mix(in srgb, var(--neutral-alpha-medium) 75%, #7c8aff 25%)",
-                background: "rgba(255,255,255,0.05)",
+                border: "1px solid var(--neutral-alpha-medium)",
+                background: "var(--page-background)",
                 color: "inherit",
               }}
             />
@@ -260,7 +260,7 @@ export function DynamicSqlSandbox() {
                 onClick={() => setShowColumnModal(false)}
                 style={{
                   ...buttonStyle,
-                  background: "rgba(255,255,255,0.08)",
+                  background: "var(--neutral-alpha-weak)",
                 }}
               >
                 Cancel
