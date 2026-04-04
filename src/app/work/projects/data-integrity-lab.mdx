@@ -1,0 +1,43 @@
+---
+title: "Data Integrity Lab - Validation, Matching, and Import Decisioning"
+publishedAt: "2025-06-01"
+summary: "An interactive Next.js demo that ingests messy client data, normalizes fields, detects duplicate/collision risk, and explains deterministic import decisions."
+images:
+  - "/images/projects/dynamic-sql-grid.svg"
+link: "/data-integrity-lab"
+team:
+  - name: "Michael Plymire"
+    role: "Software Engineer"
+    avatar: "/images/avatar.svg"
+    linkedIn: "https://www.linkedin.com/in/michael-plymire/"
+---
+
+## Project Overview
+
+Data Integrity Lab is a portfolio project designed to feel like a real internal operations tool used by data/platform teams before importing customer records.
+
+The demo processes pasted or uploaded CSV/JSON records entirely client-side and applies practical production-style rules for:
+
+- validation of required and formatted fields,
+- normalization before matching,
+- duplicate and collision detection with confidence levels,
+- import decision simulation,
+- concise, human-readable explanation generation.
+
+## Why It Matters
+
+In enterprise environments, record quality issues can lead to compliance risk, duplicate outreach, and broken reporting. This project demonstrates how rule-based processing can automate safe paths while routing uncertain records to manual review.
+
+## Highlights
+
+- **Deterministic rules engine** for parsing, normalization, validation, matching, and decisioning.
+- **Collision safeguards** when identifiers overlap but identity details materially differ.
+- **Searchable and filterable review UI** with summary metrics and deep-dive record inspection.
+- **Export support** for reviewed output in JSON/CSV.
+
+## Tech Stack
+
+- **Next.js App Router**
+- **React + TypeScript**
+- **Modular client-side processing utilities**
+- **Responsive UI with confidence and decision indicators**
