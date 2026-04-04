@@ -27,3 +27,24 @@
         align-self: center;
     }
 }
+.repoList {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.repoCard {
+    border: 1px solid var(--neutral-alpha-medium);
+    border-radius: var(--radius-m);
+    padding: var(--static-space-16);
+    background: var(--neutral-alpha-weak);
+}
+
+.repoLink {
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.repoLink:hover {
+    text-decoration: underline;
+}

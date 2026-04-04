@@ -16,6 +16,7 @@ import { baseURL, about, person, social } from "@/resources";
 import TableOfContents from "@/components/about/TableOfContents";
 import styles from "@/components/about/about.module.scss";
 import React from "react";
+import GitHubRepositories from "@/components/about/GitHubRepositories";
 
 export async function generateMetadata() {
   return Meta.generate({
@@ -28,6 +29,11 @@ export async function generateMetadata() {
 }
 
 export default function About() {
+  const githubUsername = social
+    .find((item) => item.name.toLowerCase() === "github")
+    ?.link?.replace("https://github.com/", "")
+    ?.replace(/\/$/, "");
+
   const structure = [
     {
       title: about.intro.title,
@@ -48,6 +54,11 @@ export default function About() {
       title: about.technical.title,
       display: about.technical.display,
       items: about.technical.skills.map((skill) => skill.title),
+    },
+    {
+      title: "GitHub Repositories",
+      display: Boolean(githubUsername),
+      items: [],
     },
   ];
   return (
@@ -96,7 +107,7 @@ export default function About() {
             </Flex>
             {person.languages.length > 0 && (
               <Flex wrap gap="8">
-                {person.languages.map((language, index) => (
+                {person.languages.map((language) => (
                   <Tag key={language} size="l">
                     {language}
                   </Tag>
@@ -313,6 +324,15 @@ export default function About() {
                   </Column>
                 ))}
               </Column>
+            </>
+          )}
+
+          {githubUsername && (
+            <>
+              <Heading as="h2" id="GitHub Repositories" variant="display-strong-s" marginBottom="m">
+                GitHub Repositories
+              </Heading>
+              <GitHubRepositories username={githubUsername} />
             </>
           )}
         </Column>
