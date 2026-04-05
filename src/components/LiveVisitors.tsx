@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+import styles from "./LiveVisitors.module.scss";
 
 const HEARTBEAT_INTERVAL_MS = 15000;
 
@@ -20,10 +22,20 @@ const getVisitorId = () => {
 export const LiveVisitors = () => {
   const [visitorCount, setVisitorCount] = useState<number | null>(null);
   const [visitorId, setVisitorId] = useState<string | null>(null);
+  const [countAnimationKey, setCountAnimationKey] = useState(0);
+  const lastCount = useRef<number | null>(null);
 
   useEffect(() => {
     setVisitorId(getVisitorId());
   }, []);
+
+  useEffect(() => {
+    if (visitorCount !== null && lastCount.current !== null && visitorCount !== lastCount.current) {
+      setCountAnimationKey((current) => current + 1);
+    }
+
+    lastCount.current = visitorCount;
+  }, [visitorCount]);
 
   useEffect(() => {
     if (!visitorId) {
@@ -66,9 +78,13 @@ export const LiveVisitors = () => {
     };
   }, [visitorId]);
 
-  if (visitorCount === null) {
-    return <>Live visitors: --</>;
-  }
-
-  return <>Live visitors: {visitorCount}</>;
+  return (
+    <div className={styles.liveVisitors} aria-live="polite" aria-atomic="true">
+      <span className={styles.dot} aria-hidden="true" />
+      <span className={styles.label}>Live visits</span>
+      <span key={countAnimationKey} className={`${styles.count} ${styles.countPulse}`}>
+        {visitorCount ?? "--"}
+      </span>
+    </div>
+  );
 };
