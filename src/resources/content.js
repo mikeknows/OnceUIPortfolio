@@ -96,32 +96,99 @@ const about = {
     title: "Work Experience",
     experiences: [
       {
-        company: "Enterprise Product Team",
-        timeframe: "2023 - Present",
-        role: "Software Engineer",
+        company: "TriYoung",
+        timeframe: "06/2021 - 06/2025",
+        role: "Software Support Specialist → Software Developer → Lead Software Developer",
         achievements: [
           <>
-            Built and maintained C# APIs used by internal and client-facing apps, with a focus on auth, reliability, and clear contracts.
+            <strong>Promoted to Lead Software Developer (03/2023):</strong> Designed and maintained external CAREWare applications, including token-based login workflows and automated record posting processes.
           </>,
           <>
-            Implemented GitHub Actions CI/CD with Fortify scans so security issues are caught before deployment.
+            Developed automated eligibility systems across multiple jurisdictions and CAREWare import programs aligned with PDI schemas.
           </>,
           <>
-            Shipped dynamic SQL-driven grid features that reduced custom UI work for new data views.
+            Built dynamic SQL reporting tools, service and budgeting applications, and automated CAREWare uptime monitoring solutions.
+          </>,
+          <>
+            Automated build and security pipelines, maintained the VB.NET codebase, and designed secure deployment processes for Eligibility and Import applications.
+          </>,
+          <>
+            Mentored a junior developer through code reviews and pair programming to strengthen code quality and consistency.
+          </>,
+          <>
+            <strong>Promoted to Software Developer (10/2021):</strong> Built ASPX applications in the .NET Framework and developed and maintained integrations with the CAREWare database and API.
+          </>,
+          <>
+            Established GitHub repositories, build and release pipelines, and staging and production workflows to improve delivery and code quality.
+          </>,
+          <>
+            Deployed and managed virtual machines, SQL databases, functions, app services, AWS resources, and IIS environments.
+          </>,
+          <>
+            <strong>Joined as Software Support Specialist (06/2021):</strong> Resolved end-user software and help desk issues, delivered remote client training, and maintained clear technical documentation.
+          </>,
+          <>
+            Tested and implemented new features, developed test plans, and supported server and database configurations.
+          </>,
+          <>
+            Supported CAREWare reporting, custom fields and subforms, permissions, services, labs, screenings, and RSR/ADR workflows.
           </>,
         ],
         images: [],
       },
       {
-        company: "Earlier Roles",
-        timeframe: "Before 2023",
-        role: "Full Stack Developer",
+        company: "Woolpert — Geospatial Sector",
+        timeframe: "01/2021 - 06/2021",
+        role: "Application Support Specialist",
         achievements: [
           <>
-            Delivered web features end-to-end across frontend, backend, and database layers.
+            Developed specialized Microsoft SQL Server queries for data gathering and analysis across multiple environments.
           </>,
           <>
-            Improved query performance and simplified API responses to make UI development faster.
+            Troubleshot cloud download and upload synchronization through several VPN clients and resolved customer application issues.
+          </>,
+          <>
+            Supported geospatial applications across multiple database layers.
+          </>,
+        ],
+        images: [],
+      },
+      {
+        company: "R&L Carriers — Information Management Team",
+        timeframe: "07/2020 - 01/2021",
+        role: "Service Desk Analyst",
+        achievements: [
+          <>
+            Coordinated with teams including Telecommunications to deliver cross-department projects.
+          </>,
+          <>
+            Trained Service Desk Analysts in ITIL ServicePro issue management and advanced Microsoft Office and Windows troubleshooting.
+          </>,
+          <>
+            Supported Cisco Finesse and Jabber, Active Directory, Group Policy, LDAP, VPN tools, and critical system and network monitoring.
+          </>,
+        ],
+        images: [],
+      },
+      {
+        company: "Wright State University — CATS",
+        timeframe: "09/2016 - 07/2020",
+        role: "Senior IT Service Desk → Project Manager",
+        achievements: [
+          <>
+            Managed high-level VIP incidents and requests and delegated work to assistant representatives.
+          </>,
+          <>
+            Trained student service desk staff in ITIL and Salesforce and resolved Active Directory and campus system issues.
+          </>,
+          <>
+            Performed hardware, software, and peripheral repairs and maintained installation and replacement documentation.
+          </>,
+          <>
+            <strong>Expanded into Project Management (01/2019):</strong> Led a Computer Science student programming team developing in-house applications for university use.
+          </>,
+          <>
+            Mentored students during lectures and office hours and taught version control and project contribution practices.
           </>,
         ],
         images: [],
