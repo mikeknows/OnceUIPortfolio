@@ -4,6 +4,7 @@ import { Meta, Schema, AvatarGroup, Button, Column, Flex, Heading, Media, Text }
 import { baseURL, about, person, work } from "@/resources";
 import { formatDate } from "@/utils/formatDate";
 import { ScrollToHash, CustomMDX } from "@/components";
+import { CommentsSection } from "@/components/comments/CommentsSection";
 import { Metadata } from "next";
 
 export async function generateStaticParams(): Promise<{ slug: string }[]> {
@@ -93,6 +94,7 @@ export default async function Project({
         </Flex>
         <CustomMDX source={post.content} />
       </Column>
+      <CommentsSection entityType="work" slug={post.slug} />
       <ScrollToHash />
     </Column>
   );

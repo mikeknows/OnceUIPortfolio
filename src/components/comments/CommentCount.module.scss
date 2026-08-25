@@ -1,0 +1,9 @@
+.count {
+  display: inline-flex;
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
+.bump {
+  transform: scale(1.05);
+  opacity: 0.86;
+}
