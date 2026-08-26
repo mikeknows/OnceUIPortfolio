@@ -14,6 +14,20 @@
     top: var(--static-space-64);
 }
 
+.mobileSocial {
+    display: none !important;
+}
+
+.tableOfContents {
+    display: flex;
+}
+
+@media (max-width: 1280px) {
+    .tableOfContents {
+        display: none !important;
+    }
+}
+
 @media (max-width: breakpoints.$s) {
     .avatar {
         top: auto;
@@ -26,25 +40,48 @@
     .blockAlign {
         align-self: center;
     }
-}
-.repoList {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+
+    .desktopSocial {
+        display: none !important;
+    }
+
+    .mobileSocial {
+        display: inline-flex !important;
+    }
 }
 
-.repoCard {
+.roleTimeline {
+    position: relative;
+    margin-top: var(--static-space-8);
+    padding-left: var(--static-space-24);
+
+    &::before {
+        position: absolute;
+        top: var(--static-space-8);
+        bottom: var(--static-space-8);
+        left: 5px;
+        width: 1px;
+        content: "";
+        background: linear-gradient(to bottom, var(--brand-alpha-strong), var(--neutral-alpha-medium));
+    }
+}
+
+.roleStage {
+    position: relative;
+    padding: var(--static-space-16);
     border: 1px solid var(--neutral-alpha-medium);
     border-radius: var(--radius-m);
-    padding: var(--static-space-16);
-    background: var(--neutral-alpha-weak);
+    background: linear-gradient(145deg, var(--neutral-alpha-weak), transparent);
 }
 
-.repoLink {
-    font-weight: 600;
-    text-decoration: none;
-}
-
-.repoLink:hover {
-    text-decoration: underline;
+.roleMarker {
+    position: absolute;
+    top: var(--static-space-20);
+    left: calc(-1 * var(--static-space-24) - 1px);
+    width: 11px;
+    height: 11px;
+    border: 2px solid var(--page-background);
+    border-radius: 50%;
+    background: var(--brand-background-strong);
+    box-shadow: 0 0 0 4px var(--brand-alpha-weak);
 }

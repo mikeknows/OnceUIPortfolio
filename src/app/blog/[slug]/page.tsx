@@ -22,7 +22,7 @@ export async function generateMetadata({
   const slugPath = Array.isArray(routeParams.slug) ? routeParams.slug.join('/') : routeParams.slug || '';
 
   const posts = getPosts(["src", "app", "blog", "posts"])
-  let post = posts.find((post) => post.slug === slugPath);
+  const post = posts.find((post) => post.slug === slugPath);
 
   if (!post) return {};
 
@@ -41,7 +41,7 @@ export default async function Blog({
   const routeParams = await params;
   const slugPath = Array.isArray(routeParams.slug) ? routeParams.slug.join('/') : routeParams.slug || '';
 
-  let post = getPosts(["src", "app", "blog", "posts"]).find((post) => post.slug === slugPath);
+  const post = getPosts(["src", "app", "blog", "posts"]).find((post) => post.slug === slugPath);
 
   if (!post) {
     notFound();
@@ -54,7 +54,7 @@ export default async function Blog({
 
   return (
     <Row fillWidth>
-      <Row maxWidth={12} hide="m"/>
+      <Row maxWidth={12} m={{ hide: true }}/>
       <Row fillWidth horizontal="center">
         <Column as="section" maxWidth="xs" gap="l">
           <Schema
@@ -88,7 +88,7 @@ export default async function Blog({
           <ScrollToHash />
         </Column>
     </Row>
-    <Column maxWidth={12} paddingLeft="40" fitHeight position="sticky" top="80" gap="16" hide="m">
+    <Column maxWidth={12} paddingLeft="40" fitHeight position="sticky" top="80" gap="16" m={{ hide: true }}>
       <Row
         gap="12"
         paddingLeft="2"

@@ -2,14 +2,14 @@ import fs from "fs";
 import path from "path";
 import matter from "gray-matter";
 
-type Team = {
+export type Team = {
   name: string;
   role: string;
   avatar: string;
   linkedIn: string;
 };
 
-type Metadata = {
+export type PostMetadata = {
   title: string;
   publishedAt: string;
   summary: string;
@@ -38,7 +38,7 @@ function readMDXFile(filePath: string) {
   const rawContent = fs.readFileSync(filePath, "utf-8");
   const { data, content } = matter(rawContent);
 
-  const metadata: Metadata = {
+  const metadata: PostMetadata = {
     title: data.title || "",
     publishedAt: data.publishedAt,
     summary: data.summary || "",
@@ -51,6 +51,10 @@ function readMDXFile(filePath: string) {
 
   return { metadata, content };
 }
+
+export type PostData = ReturnType<typeof readMDXFile> & {
+  slug: string;
+};
 
 function getMDXData(dir: string) {
   const mdxFiles = getMDXFiles(dir);

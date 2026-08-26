@@ -1,0 +1,213 @@
+---
+title: "Building Operable APIs: Contracts, Boundaries, and Failure Recovery"
+summary: "Practical C# and .NET patterns for APIs that are predictable to call, safe around data, and diagnosable when dependencies fail."
+publishedAt: "2025-06-30"
+tag: "C# / .NET"
+image: "/images/projects/api-client-server.svg"
+---
+
+An API is not finished when the happy path returns `200 OK`. It is finished when callers can
+understand its contract, operators can explain a failure, and the system behaves predictably when a
+database or downstream service is slow.
+
+That is the standard I learned from maintaining data-heavy applications and integrations. The most
+valuable improvements were rarely exotic. They were explicit boundaries, bounded work, useful
+diagnostics, and tests at the places where systems meet.
+
+> The examples here are original, simplified, and product-neutral. They reflect general professional
+> experience without reproducing an employer, customer, or production system.
+
+## Start with the workflow contract
+
+Before choosing routes or libraries, I write down what the caller needs to accomplish:
+
+- What identifies the resource?
+- Which fields are required, optional, or server-owned?
+- Can the request safely be repeated?
+- What does “not found” mean in this workflow?
+- Which failures can the caller correct?
+- What information must never leave the service boundary?
+
+That produces a clearer API than designing from database tables. Persistence models change for many
+reasons; a public contract should change deliberately.
+
+```csharp
+public sealed record CreateImportRequest(
+    string SourceSystem,
+    string ExternalId,
+    IReadOnlyList<ImportField> Fields);
+
+public sealed record ImportAcceptedResponse(
+    Guid OperationId,
+    string Status,
+    DateTimeOffset AcceptedAt);
+```
+
+The request contains caller-owned input. The response contains server-owned state. Neither exposes an
+ORM entity or an internal table shape.
+
+## Validate at the edge
+
+Transport validation should reject malformed input before it reaches business logic. Domain validation
+then evaluates rules that require context or stored state.
+
+```csharp
+[ApiController]
+[Route("api/imports")]
+public sealed class ImportsController : ControllerBase
+{
+    private readonly IImportService _imports;
+
+    public ImportsController(IImportService imports) => _imports = imports;
+
+    [HttpPost]
+    public async Task<ActionResult<ImportAcceptedResponse>> Create(
+        [FromBody] CreateImportRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(request.SourceSystem) ||
+            string.IsNullOrWhiteSpace(request.ExternalId))
+        {
+            return ValidationProblem(new Dictionary<string, string[]>
+            {
+                ["identity"] = ["SourceSystem and ExternalId are required."]
+            });
+        }
+
+        var result = await _imports.AcceptAsync(request, cancellationToken);
+        return AcceptedAtAction(nameof(GetStatus), new { id = result.OperationId }, result);
+    }
+
+    [HttpGet("{id:guid}")]
+    public async Task<ActionResult<ImportAcceptedResponse>> GetStatus(
+        Guid id,
+        CancellationToken cancellationToken)
+    {
+        var result = await _imports.GetStatusAsync(id, cancellationToken);
+        return result is null ? NotFound() : Ok(result);
+    }
+}
+```
+
+Notice that cancellation flows through the controller. If the caller disconnects, work that no longer
+has value should stop when it is safe to do so.
+
+## Keep data access bounded
+
+An endpoint should not accidentally become “return the entire table.” Put explicit limits on search,
+pagination, and request body size. Select only the fields the response needs.
+
+```csharp
+const string sql = """
+    SELECT Id, ExternalId, Status, UpdatedAt
+    FROM ImportOperation
+    WHERE UpdatedAt < @Cursor
+    ORDER BY UpdatedAt DESC
+    OFFSET 0 ROWS FETCH NEXT @PageSize ROWS ONLY;
+    """;
+
+command.Parameters.Add("@Cursor", SqlDbType.DateTimeOffset).Value = cursor;
+command.Parameters.Add("@PageSize", SqlDbType.Int).Value = Math.Clamp(pageSize, 1, 100);
+```
+
+The values are parameterized, the result is projected, and the page size is capped. Dynamic identifiers
+such as sort columns require a separate allow-list because SQL parameters represent values, not syntax.
+
+## Make retries intentional
+
+Retries can turn a brief interruption into a successful request, but they can also repeat side effects or
+amplify an outage. I only retry when all of these are true:
+
+1. The operation is idempotent, or it has an idempotency key.
+2. The failure is plausibly transient.
+3. The attempt count and total time are bounded.
+4. Each attempt is visible in logs and metrics.
+
+```csharp
+using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+timeout.CancelAfter(TimeSpan.FromSeconds(8));
+
+using var response = await httpClient.SendAsync(request, timeout.Token);
+response.EnsureSuccessStatusCode();
+```
+
+Timeouts and cancellation come first. A retry policy without a time budget can make a dependency failure
+slower and harder to diagnose.
+
+## Return safe, useful failures
+
+Callers need stable error categories; they do not need exception messages, stack traces, SQL text, or
+internal hostnames.
+
+```csharp
+catch (ExternalServiceException exception)
+{
+    logger.LogError(
+        exception,
+        "Import dependency failed for operation {OperationId} and request {RequestId}",
+        operationId,
+        HttpContext.TraceIdentifier);
+
+    return Problem(
+        statusCode: StatusCodes.Status503ServiceUnavailable,
+        title: "A required service is temporarily unavailable.",
+        extensions: new Dictionary<string, object?>
+        {
+            ["requestId"] = HttpContext.TraceIdentifier
+        });
+}
+```
+
+The server log keeps technical context. The client receives a safe message and a request identifier that
+support can correlate with telemetry.
+
+## Test the seams
+
+Unit tests are useful for business rules. Integration tests are more valuable for the boundaries most
+likely to drift: routing, serialization, authentication, validation, and database behavior.
+
+```csharp
+[Fact]
+public async Task Create_rejects_a_missing_external_identity()
+{
+    await using var application = new WebApplicationFactory<Program>();
+    using var client = application.CreateClient();
+
+    var response = await client.PostAsJsonAsync(
+        "/api/imports",
+        new CreateImportRequest("source-a", "", []));
+
+    Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+    Assert.Contains("identity", problem!.Errors.Keys);
+}
+```
+
+I also test timeouts, duplicate submissions, authorization failures, and malformed downstream responses.
+Those cases reveal more about operational quality than another happy-path mock.
+
+## Observability is part of the contract
+
+Useful telemetry answers a small set of concrete questions:
+
+- Which route and operation failed?
+- How long did the request and each dependency take?
+- Was the failure validation, authorization, conflict, timeout, or dependency related?
+- Can an operator correlate the request across services without logging sensitive payloads?
+
+Structured logs, request IDs, duration histograms, and bounded health checks are enough to answer most of
+those questions. Logging entire request bodies is not.
+
+## What I optimize for
+
+The most maintainable APIs I have worked with share the same traits:
+
+- contracts are smaller than the underlying data model;
+- validation and authorization happen at clear boundaries;
+- database and dependency work is bounded;
+- repeated requests have deliberate semantics;
+- failures are safe for callers and useful for operators;
+- integration tests protect the seams.
+
+That is what scalability means in practice: not a dramatic traffic number, but a system that continues to
+behave predictably as data volume, callers, and operational pressure grow.

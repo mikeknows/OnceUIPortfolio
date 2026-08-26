@@ -1,16 +1,16 @@
 export type RawRecord = {
-  firstName?: string;
-  lastName?: string;
-  dateOfBirth?: string;
-  ssnLast4?: string;
-  email?: string;
-  phone?: string;
-  street?: string;
-  city?: string;
-  state?: string;
-  zip?: string;
-  sourceSystemId?: string;
-  externalClientId?: string;
+  firstName?: unknown;
+  lastName?: unknown;
+  dateOfBirth?: unknown;
+  ssnLast4?: unknown;
+  email?: unknown;
+  phone?: unknown;
+  street?: unknown;
+  city?: unknown;
+  state?: unknown;
+  zip?: unknown;
+  sourceSystemId?: unknown;
+  externalClientId?: unknown;
   [key: string]: unknown;
 };
 

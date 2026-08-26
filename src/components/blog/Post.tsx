@@ -3,9 +3,10 @@
 import { Column, Flex, Heading, Media, SmartLink, Tag, Text } from '@once-ui-system/core';
 import styles from './Posts.module.scss';
 import { formatDate } from '@/utils/formatDate';
+import type { PostData } from '@/utils/utils';
 
 interface PostProps {
-    post: any;
+    post: PostData;
     thumbnail: boolean;
     direction?: "row" | "column";
 }
@@ -24,7 +25,7 @@ export default function Post({ post, thumbnail, direction }: PostProps) {
                 direction={direction}
                 radius="l"
                 className={styles.hover}
-                mobileDirection="column"
+                s={{ direction: "column" }}
                 fillWidth>
                 {post.metadata.image && thumbnail && (
                     <Media

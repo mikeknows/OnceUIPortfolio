@@ -1,134 +1,71 @@
 ---
-title: "Dynamic SQL Grid - Backend to Frontend Column Mapping"
+title: "Dynamic SQL Grid - Schema to Interface"
 publishedAt: "2024-08-20"
-summary: "A sophisticated data grid component that dynamically maps SQL table columns to user interface columns with real-time data binding and interactive features."
+summary: "An interactive portfolio demo that parses a simple SQL table definition and maps its columns into an editable React grid."
 images:
   - "/images/projects/dynamic-sql-grid.svg"
 team:
   - name: "Michael Plymire"
     role: "Full Stack Developer"
-    avatar: "/images/avatar.svg"
-    linkedIn: "https://www.linkedin.com/in/michael-plymire-b43b43179/"
+    avatar: "/images/personal/michael-plymire-headshot.jpg"
+    linkedIn: "https://www.linkedin.com/in/michaelplymire/"
 ---
 
-## Project Overview
+> This is an original, product-neutral demonstration inspired by real data-heavy application work.
+> It uses synthetic data and does not reproduce an employer interface, schema, or source code.
 
-The Dynamic SQL Grid project demonstrates how database table columns are seamlessly mapped to user interface components, creating a responsive and interactive data visualization system. This solution bridges the gap between backend data structures and frontend user experience.
+## The problem
 
-## Technical Architecture
+Administrative applications often need to expose data from many tables without rebuilding every grid
+from scratch. The useful engineering question is not “how do I draw a table?” It is how to turn a
+schema into predictable interface behavior while keeping validation, naming, and editing understandable.
 
-### Backend SQL Structure
-```sql
-CREATE TABLE employees (
-    id INT PRIMARY KEY,
-    first_name VARCHAR(50),
-    last_name VARCHAR(50),
-    email VARCHAR(100),
-    department VARCHAR(50),
-    salary DECIMAL(10,2),
-    hire_date DATE,
-    status ENUM('active', 'inactive')
-);
-```
+This portfolio demo makes that mapping visible. Change the sample SQL, apply it, and the React grid
+reconfigures around the detected columns.
 
-### Dynamic Column Mapping
-The system automatically maps SQL columns to UI components:
+## Interactive sandbox
 
-```typescript
-interface ColumnMapping {
-  sqlColumn: string;
-  displayName: string;
-  dataType: 'string' | 'number' | 'date' | 'boolean';
-  sortable: boolean;
-  filterable: boolean;
-  width?: number;
-}
+The sandbox intentionally implements a small, inspectable slice of the idea:
 
-const columnMappings: ColumnMapping[] = [
-  { sqlColumn: 'first_name', displayName: 'First Name', dataType: 'string', sortable: true, filterable: true },
-  { sqlColumn: 'last_name', displayName: 'Last Name', dataType: 'string', sortable: true, filterable: true },
-  { sqlColumn: 'salary', displayName: 'Salary', dataType: 'number', sortable: true, filterable: true },
-  { sqlColumn: 'hire_date', displayName: 'Hire Date', dataType: 'date', sortable: true, filterable: true }
-];
-```
-
-## Interactive Sandbox Demo
-
-Try a lightweight in-page sandbox that mimics the backend-to-frontend mapping flow. Update the SQL schema, add columns/rows, and watch the React grid reconfigure in real time.
+- parses column names from a basic `CREATE TABLE` statement,
+- preserves existing cell values when compatible columns remain,
+- adds columns and rows through quick actions,
+- maps SQL-style names into readable grid headings, and
+- keeps all sample data in the browser.
 
 <DynamicSqlSandbox />
 
-## Key Features
+## Mapping model
 
-### Real-time Data Binding
-- Automatic column detection from SQL schema
-- Dynamic type inference and validation
-- Real-time updates with WebSocket connections
-- Optimized rendering with virtual scrolling
-
-### Interactive Grid Features
-- Multi-column sorting and filtering
-- Column resizing and reordering
-- Pagination with server-side processing
-- Export functionality (CSV, Excel, PDF)
-
-### Performance Optimizations
-- Lazy loading for large datasets
-- Intelligent caching strategies
-- Debounced search and filter operations
-- Optimized SQL query generation
-
-## Implementation Highlights
-
-### Frontend Component (React)
 ```typescript
-const DynamicGrid: React.FC<GridProps> = ({ tableName, apiEndpoint }) => {
-  const [columns, setColumns] = useState<ColumnMapping[]>([]);
-  const [data, setData] = useState<any[]>([]);
-  
-  useEffect(() => {
-    // Fetch column schema from backend
-    fetchColumnSchema(tableName).then(setColumns);
-    fetchTableData(tableName).then(setData);
-  }, [tableName]);
-
-  return (
-    <GridContainer>
-      {columns.map(column => (
-        <GridColumn 
-          key={column.sqlColumn}
-          mapping={column}
-          data={data}
-        />
-      ))}
-    </GridContainer>
-  );
+type GridColumn = {
+  key: string;
+  label: string;
 };
+
+const toGridColumn = (sqlColumn: string): GridColumn => ({
+  key: sqlColumn,
+  label: sqlColumn.replaceAll("_", " "),
+});
 ```
 
-### Backend API (C# .NET)
-```csharp
-[HttpGet("schema/{tableName}")]
-public async Task<IActionResult> GetTableSchema(string tableName)
-{
-    var columns = await _dbContext.GetColumnMappings(tableName);
-    return Ok(columns.Select(c => new ColumnMappingDto
-    {
-        SqlColumn = c.ColumnName,
-        DisplayName = c.DisplayName,
-        DataType = c.DataType,
-        Sortable = c.IsSortable,
-        Filterable = c.IsFilterable
-    }));
-}
-```
+The live demo uses a deliberately lightweight parser, not a complete SQL grammar. A production version
+would get trusted metadata from a backend endpoint, allow-list exposed tables and columns, map database
+types explicitly, validate edits server-side, and apply authorization independently of the UI.
 
-## Results & Impact
+## What the demo proves
 
-- **Performance**: 90% faster data loading with virtual scrolling
-- **User Experience**: Intuitive column management and filtering
-- **Scalability**: Handles datasets with 100,000+ records smoothly
-- **Reusability**: Generic component used across 15+ different data tables
-- **Maintenance**: 60% reduction in custom grid development time
+- **Schema-driven UI:** one source of column truth can configure repeated interface patterns.
+- **State migration:** values survive compatible schema changes rather than resetting blindly.
+- **Safe scope:** the demo is honest about what it implements and what belongs on a server.
+- **Maintainability:** the transformation is small enough to inspect, test, and replace with richer metadata later.
 
-This project showcases the seamless integration between database architecture and user interface design, demonstrating how backend data structures can be elegantly presented to end users.
+## Where I would take it next
+
+1. Replace the regex parser with typed metadata returned by an authenticated API.
+2. Add explicit data types, formatters, validators, and accessible error states.
+3. Add server-side pagination, sorting, and filtering for large datasets.
+4. Test schema changes, duplicate names, invalid identifiers, and interrupted saves.
+
+The value of this pattern is reuse without hiding complexity. A configurable grid should reduce repeated
+work while still making authorization, validation, and failure behavior explicit.

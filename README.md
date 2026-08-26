@@ -1,104 +1,54 @@
-# **Michael Plymire's Portfolio**
+# Michael Plymire — Software Engineering Portfolio
 
-A modern, responsive portfolio website built with Next.js and Once UI, showcasing my software engineering projects and experience.
+A personal portfolio focused on reliable healthcare software, data-intensive applications, secure
+delivery, and the independent projects I build around gaming, Linux, and home automation.
 
+Live site: [mike-p-portfolio.vercel.app](https://mike-p-portfolio.vercel.app)
 
-## **About**
+## What is here
 
-This portfolio website was customized from the Magic Portfolio template to showcase my work as a software engineer. It features my projects, blog posts, and professional experience.
+- A career path from hands-on IT support to Lead Software Developer and a current Software Engineer role.
+- Product-neutral engineering case studies built with original examples and synthetic data.
+- Interactive Data Integrity Lab and Dynamic SQL Grid demonstrations.
+- Steamprint, SteamOS/TV power orchestration, and home-automation projects.
+- Articles informed by practical engineering experience.
 
-# **Getting started**
+Employer products, source code, interfaces, internal architecture, customer information, and production
+data are intentionally excluded from this public repository.
 
-This portfolio was built with [Once UI](https://once-ui.com) for [Next.js](https://nextjs.org). It requires Node.js v18.17+.
+## Stack
 
-**1. Clone the repository**
-```
-git clone https://github.com/mikeknows/magic-portfolio.git
-```
+- Next.js App Router and React
+- TypeScript, JavaScript, MDX, and Sass
+- Once UI components and design tokens
+- Vercel hosting and analytics
 
-**2. Install dependencies**
-```
+## Local development
+
+Requires a current Node.js LTS release.
+
+```bash
 npm install
-```
-
-**3. Run dev server**
-```
 npm run dev
 ```
 
-**4. Edit config**
-```
-src/resources/config
-```
+Create a production build with:
 
-**5. Edit content**
-```
-src/resources/content
+```bash
+npm run build
 ```
 
-**6. Create blog posts / projects**
-```
-Add a new .mdx file to src/app/blog/posts or src/app/work/projects
-```
+Primary content lives in `src/resources/content.js`. Pages are under `src/app`, reusable components
+are under `src/components`, and project/article content is stored as MDX.
 
-## **Contact**
+## Design attribution
 
-Feel free to reach out if you'd like to collaborate or discuss software engineering!
+The styling foundation and component system come from [Once UI](https://once-ui.com). This portfolio
+has been substantially customized in layout, content, imagery, interaction, and project functionality.
+Once UI retains ownership of its own library and template work.
 
-- Email: michael.plymire@gmail.com
-- LinkedIn: [linkedin.com/in/michaelplymire](https://linkedin.com/in/michaelplymire)
-- GitHub: [github.com/mikeknows](https://github.com/mikeknows)
+## Contact
 
-# **Documentation**
-
-Docs available at: [docs.once-ui.com](https://docs.once-ui.com/docs/magic-portfolio/quick-start)
-
-# **Features**
-
-## **Once UI**
-- All tokens, components & features of [Once UI](https://once-ui.com)
-
-## **SEO**
-- Automatic open-graph and X image generation with next/og
-- Automatic schema and metadata generation based on the content file
-
-## **Design**
-- Responsive layout optimized for all screen sizes
-- Timeless design without heavy animations and motion
-- Endless customization options through [data attributes](https://once-ui.com/docs/theming)
-
-## **Content**
-- Render sections conditionally based on the content file
-- Enable or disable pages for blog, work, gallery and about / CV
-- Generate and display social links automatically
-- Set up password protection for URLs
-
-## **Localization**
-- A localized version of Magic Portfolio is available with the next-intl library
-- To use localization, switch to the 'i18n' branch
-
-# **Authors**
-
-Connect with us on Threads or LinkedIn.
-
-Lorant Toth: [Threads](https://www.threads.net/@lorant.one), [LinkedIn](https://www.linkedin.com/in/tothlorant/)  
-Zsofia Komaromi: [Threads](https://www.threads.net/@zsofia_kom), [LinkedIn](https://www.linkedin.com/in/zsofiakomaromi/)
-
-Localization added by [François Hernandez](https://github.com/francoishernandez)
-
-# **Get involved**
-
-- Join the [Design Engineers Club on Discord](https://discord.com/invite/5EyAQ4eNdS) and share your portfolio with us!
-- Report a [bug](https://github.com/once-ui-system/magic-portfolio/issues/new?labels=bug&template=bug_report.md).
-
-# **License**
-
-Distributed under the CC BY-NC 4.0 License.
-- Commercial usage is not allowed.
-- Attribution is required.
-- You can extend the license to commercial use by purchasing a [Once UI Pro](https://once-ui.com/pricing) license.
-
-See `LICENSE.txt` for more information.
-
-# **Deploy with Vercel**
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fonce-ui-system%2Fmagic-portfolio&project-name=portfolio&repository-name=portfolio&redirect-url=https%3A%2F%2Fgithub.com%2Fonce-ui-system%2Fmagic-portfolio&demo-title=Magic%20Portfolio&demo-description=Showcase%20your%20designers%20or%20developer%20portfolio&demo-url=https%3A%2F%2Fdemo.magic-portfolio.com&demo-image=%2F%2Fraw.githubusercontent.com%2Fonce-ui-system%2Fmagic-portfolio%2Fmain%2Fpublic%2Fimages%2Fog%2Fhome.jpg)
+- [LinkedIn](https://www.linkedin.com/in/michaelplymire/)
+- [GitHub](https://github.com/mikeknows)
+- [Email](mailto:michael.plymire@gmail.com)

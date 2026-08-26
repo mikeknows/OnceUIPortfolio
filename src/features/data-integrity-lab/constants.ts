@@ -1,4 +1,4 @@
-import { RawRecord } from "./types";
+import type { RawRecord } from "./types";
 
 export const REQUIRED_FIELDS: Array<keyof RawRecord> = [
   "firstName",

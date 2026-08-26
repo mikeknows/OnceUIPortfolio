@@ -6,8 +6,6 @@ import {
   Heading,
   Icon,
   IconButton,
-  Media,
-  Tag,
   Text,
   Meta,
   Schema
@@ -16,7 +14,6 @@ import { baseURL, about, person, social } from "@/resources";
 import TableOfContents from "@/components/about/TableOfContents";
 import styles from "@/components/about/about.module.scss";
 import React from "react";
-import GitHubRepositories from "@/components/about/GitHubRepositories";
 
 export async function generateMetadata() {
   return Meta.generate({
@@ -29,11 +26,6 @@ export async function generateMetadata() {
 }
 
 export default function About() {
-  const githubUsername = social
-    .find((item) => item.name.toLowerCase() === "github")
-    ?.link?.replace("https://github.com/", "")
-    ?.replace(/\/$/, "");
-
   const structure = [
     {
       title: about.intro.title,
@@ -55,11 +47,6 @@ export default function About() {
       display: about.technical.display,
       items: about.technical.skills.map((skill) => skill.title),
     },
-    {
-      title: "GitHub Repositories",
-      display: Boolean(githubUsername),
-      items: [],
-    },
   ];
   return (
     <Column maxWidth="m">
@@ -77,18 +64,9 @@ export default function About() {
         }}
       />
       {about.tableOfContent.display && (
-        <Column
-          left="0"
-          style={{ top: "50%", transform: "translateY(-50%)" }}
-          position="fixed"
-          paddingLeft="24"
-          gap="32"
-          hide="s"
-        >
-          <TableOfContents structure={structure} about={about} />
-        </Column>
+        <TableOfContents structure={structure} about={about} />
       )}
-      <Flex fillWidth mobileDirection="column" horizontal="center">
+      <Flex fillWidth s={{ direction: "column" }} horizontal="center">
         {about.avatar.display && (
           <Column
             className={styles.avatar}
@@ -101,19 +79,6 @@ export default function About() {
             horizontal="center"
           >
             <Avatar src={person.avatar} size="xl" />
-            <Flex gap="8" vertical="center">
-              <Icon onBackground="accent-weak" name="globe" />
-              {person.location}
-            </Flex>
-            {person.languages.length > 0 && (
-              <Flex wrap gap="8">
-                {person.languages.map((language) => (
-                  <Tag key={language} size="l">
-                    {language}
-                  </Tag>
-                ))}
-              </Flex>
-            )}
           </Column>
         )}
         <Column className={styles.blockAlign} flex={9} maxWidth={40}>
@@ -166,7 +131,7 @@ export default function About() {
                     item.link && (
                         <React.Fragment key={item.name}>
                             <Button
-                                className="s-flex-hide"
+                                className={styles.desktopSocial}
                                 key={item.name}
                                 href={item.link}
                                 prefixIcon={item.icon}
@@ -176,7 +141,7 @@ export default function About() {
                                 variant="secondary"
                             />
                             <IconButton
-                                className="s-flex-show"
+                                className={styles.mobileSocial}
                                 size="l"
                                 key={`${item.name}-icon`}
                                 href={item.link}
@@ -204,7 +169,14 @@ export default function About() {
               <Column fillWidth gap="l" marginBottom="40">
                 {about.work.experiences.map((experience, index) => (
                   <Column key={`${experience.company}-${experience.role}-${index}`} fillWidth>
-                    <Flex fillWidth horizontal="space-between" vertical="end" marginBottom="4">
+                    <Flex
+                      fillWidth
+                      horizontal="between"
+                      vertical="end"
+                      marginBottom="4"
+                      gap="8"
+                      s={{ direction: "column", horizontal: "start", vertical: "start" }}
+                    >
                       <Text id={experience.company} variant="heading-strong-l">
                         {experience.company}
                       </Text>
@@ -215,42 +187,48 @@ export default function About() {
                     <Text variant="body-default-s" onBackground="brand-weak" marginBottom="m">
                       {experience.role}
                     </Text>
-                    <Column as="ul" gap="16">
-                      {experience.achievements.map((achievement: JSX.Element, index: number) => (
-                        <Text
-                          as="li"
-                          variant="body-default-m"
-                          key={`${experience.company}-${index}`}
-                        >
-                          {achievement}
-                        </Text>
-                      ))}
-                    </Column>
-                    {experience.images.length > 0 && (
-                      <Flex fillWidth paddingTop="m" paddingLeft="40" gap="12" wrap>
-                        {experience.images.map((image, index) => (
-                          <Flex
-                            key={index}
-                            border="neutral-medium"
-                            radius="m"
-                            //@ts-ignore
-                            minWidth={image.width}
-                            //@ts-ignore
-                            height={image.height}
-                          >
-                            <Media
-                              enlarge
-                              radius="m"
-                              //@ts-ignore
-                              sizes={image.width.toString()}
-                              //@ts-ignore
-                              alt={image.alt}
-                              //@ts-ignore
-                              src={image.src}
-                            />
-                          </Flex>
+                    {experience.phases?.length ? (
+                      <Column className={styles.roleTimeline} gap="24">
+                        {experience.phases.map((phase) => (
+                          <Column className={styles.roleStage} key={`${experience.company}-${phase.role}`} gap="12">
+                            <span className={styles.roleMarker} aria-hidden="true" />
+                            <Flex
+                              fillWidth
+                              horizontal="between"
+                              vertical="center"
+                              s={{ direction: "column", horizontal: "start", vertical: "start" }}
+                            >
+                              <Text variant="heading-strong-m">{phase.role}</Text>
+                              <Text variant="body-default-s" onBackground="neutral-weak">
+                                {phase.timeframe}
+                              </Text>
+                            </Flex>
+                            <Column as="ul" gap="12">
+                              {phase.achievements.map((achievement: React.ReactNode, achievementIndex: number) => (
+                                <Text
+                                  as="li"
+                                  variant="body-default-m"
+                                  key={`${phase.role}-${achievementIndex}`}
+                                >
+                                  {achievement}
+                                </Text>
+                              ))}
+                            </Column>
+                          </Column>
                         ))}
-                      </Flex>
+                      </Column>
+                    ) : (
+                      <Column as="ul" gap="16">
+                        {experience.achievements.map((achievement: React.ReactNode, achievementIndex: number) => (
+                          <Text
+                            as="li"
+                            variant="body-default-m"
+                            key={`${experience.company}-${achievementIndex}`}
+                          >
+                            {achievement}
+                          </Text>
+                        ))}
+                      </Column>
                     )}
                   </Column>
                 ))}
@@ -290,51 +268,17 @@ export default function About() {
               </Heading>
               <Column fillWidth gap="l">
                 {about.technical.skills.map((skill, index) => (
-                  <Column key={`${skill}-${index}`} fillWidth gap="4">
+                  <Column key={`${skill.title}-${index}`} fillWidth gap="4">
                     <Text id={skill.title} variant="heading-strong-l">{skill.title}</Text>
                     <Text variant="body-default-m" onBackground="neutral-weak">
                       {skill.description}
                     </Text>
-                    {skill.images && skill.images.length > 0 && (
-                      <Flex fillWidth paddingTop="m" gap="12" wrap>
-                        {skill.images.map((image, index) => (
-                          <Flex
-                            key={index}
-                            border="neutral-medium"
-                            radius="m"
-                            //@ts-ignore
-                            minWidth={image.width}
-                            //@ts-ignore
-                            height={image.height}
-                          >
-                            <Media
-                              enlarge
-                              radius="m"
-                              //@ts-ignore
-                              sizes={image.width.toString()}
-                              //@ts-ignore
-                              alt={image.alt}
-                              //@ts-ignore
-                              src={image.src}
-                            />
-                          </Flex>
-                        ))}
-                      </Flex>
-                    )}
                   </Column>
                 ))}
               </Column>
             </>
           )}
 
-          {githubUsername && (
-            <>
-              <Heading as="h2" id="GitHub Repositories" variant="display-strong-s" marginTop="xl" marginBottom="m">
-                GitHub Repositories
-              </Heading>
-              <GitHubRepositories username={githubUsername} />
-            </>
-          )}
         </Column>
       </Flex>
     </Column>

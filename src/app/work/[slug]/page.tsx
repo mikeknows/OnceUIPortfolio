@@ -22,7 +22,7 @@ export async function generateMetadata({
   const slugPath = Array.isArray(routeParams.slug) ? routeParams.slug.join('/') : routeParams.slug || '';
 
   const posts = getPosts(["src", "app", "work", "projects"])
-  let post = posts.find((post) => post.slug === slugPath);
+  const post = posts.find((post) => post.slug === slugPath);
 
   if (!post) return {};
 
@@ -41,7 +41,7 @@ export default async function Project({
   const routeParams = await params;
   const slugPath = Array.isArray(routeParams.slug) ? routeParams.slug.join('/') : routeParams.slug || '';
 
-  let post = getPosts(["src", "app", "work", "projects"]).find((post) => post.slug === slugPath);
+  const post = getPosts(["src", "app", "work", "projects"]).find((post) => post.slug === slugPath);
 
   if (!post) {
     notFound();

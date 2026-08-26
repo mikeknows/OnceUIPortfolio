@@ -2,27 +2,29 @@
 
 import { mailchimp } from "@/resources";
 import { Button, Flex, Heading, Input, Text, Background, Column } from "@once-ui-system/core";
-import { opacity, SpacingToken } from "@once-ui-system/core";
-import { useState } from "react";
+import { type Opacity, type SpacingToken } from "@once-ui-system/core";
+import { type ReactNode, useState } from "react";
 
-function debounce<T extends (...args: any[]) => void>(func: T, delay: number): T {
+function debounce<TArgs extends unknown[]>(
+  func: (...args: TArgs) => void,
+  delay: number,
+): (...args: TArgs) => void {
   let timeout: ReturnType<typeof setTimeout>;
-  return ((...args: Parameters<T>) => {
+  return (...args: TArgs) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), delay);
-  }) as T;
+  };
 }
 
 type NewsletterProps = {
   display: boolean;
-  title: string | JSX.Element;
-  description: string | JSX.Element;
+  title: ReactNode;
+  description: ReactNode;
 };
 
 export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
   const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string>("");
-  const [touched, setTouched] = useState<boolean>(false);
 
   const validateEmail = (email: string): boolean => {
     if (email === "") {
@@ -47,7 +49,6 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
   const debouncedHandleChange = debounce(handleChange, 2000);
 
   const handleBlur = () => {
-    setTouched(true);
     if (!validateEmail(email)) {
       setError("Please enter a valid email address.");
     }
@@ -76,7 +77,7 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
         }}
         gradient={{
           display: mailchimp.effects.gradient.display,
-          opacity: mailchimp.effects.gradient.opacity as opacity,
+          opacity: mailchimp.effects.gradient.opacity as Opacity,
           x: mailchimp.effects.gradient.x,
           y: mailchimp.effects.gradient.y,
           width: mailchimp.effects.gradient.width,
@@ -87,20 +88,20 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
         }}
         dots={{
           display: mailchimp.effects.dots.display,
-          opacity: mailchimp.effects.dots.opacity as opacity,
+          opacity: mailchimp.effects.dots.opacity as Opacity,
           size: mailchimp.effects.dots.size as SpacingToken,
           color: mailchimp.effects.dots.color,
         }}
         grid={{
           display: mailchimp.effects.grid.display,
-          opacity: mailchimp.effects.grid.opacity as opacity,
+          opacity: mailchimp.effects.grid.opacity as Opacity,
           color: mailchimp.effects.grid.color,
           width: mailchimp.effects.grid.width,
           height: mailchimp.effects.grid.height,
         }}
         lines={{
           display: mailchimp.effects.lines.display,
-          opacity: mailchimp.effects.lines.opacity as opacity,
+          opacity: mailchimp.effects.lines.opacity as Opacity,
           size: mailchimp.effects.lines.size as SpacingToken,
           thickness: mailchimp.effects.lines.thickness,
           angle: mailchimp.effects.lines.angle,
@@ -132,7 +133,7 @@ export const Mailchimp = ({ newsletter }: { newsletter: NewsletterProps }) => {
         id="mc-embedded-subscribe-form"
         name="mc-embedded-subscribe-form"
       >
-        <Flex id="mc_embed_signup_scroll" fillWidth maxWidth={24} mobileDirection="column" gap="8">
+        <Flex id="mc_embed_signup_scroll" fillWidth maxWidth={24} s={{ direction: "column" }} gap="8">
           <Input
             formNoValidate
             id="mce-EMAIL"

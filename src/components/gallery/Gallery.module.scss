@@ -1,7 +1,8 @@
 .masonryGrid {
     display: flex;
     margin-left: calc(-1 * var(--static-space-16));
-    width: 100%;
+    width: calc(100% + var(--static-space-16));
+    padding: 0 var(--static-space-16);
 }
 
 .masonryGridColumn {
@@ -10,5 +11,43 @@
 }
 
 .gridItem {
+    position: relative;
+    overflow: hidden;
     margin-bottom: var(--static-space-16);
+    border: 1px solid var(--neutral-alpha-medium);
+    border-radius: var(--radius-l);
+    background: var(--surface-background);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.22);
+    transition: transform 280ms ease, border-color 280ms ease, box-shadow 280ms ease;
+
+    &:hover {
+        transform: translateY(-4px);
+        border-color: var(--brand-alpha-strong);
+        box-shadow: 0 32px 90px rgba(0, 0, 0, 0.32), 0 0 40px var(--brand-alpha-weak);
+    }
+}
+
+.image {
+    transition: transform 700ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 300ms ease;
+    filter: saturate(0.92) contrast(1.04);
+
+    .gridItem:hover & {
+        transform: scale(1.025);
+        filter: saturate(1.08) contrast(1.06);
+    }
+}
+
+.caption {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 64px 20px 20px;
+    color: white;
+    background: linear-gradient(to top, rgba(3, 8, 16, 0.96), rgba(3, 8, 16, 0.72) 55%, transparent);
+    pointer-events: none;
+}
+
+.location {
+    margin-bottom: 2px;
+    color: #78e8dd;
+    letter-spacing: 0.14em;
 }

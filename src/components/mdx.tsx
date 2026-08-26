@@ -1,5 +1,6 @@
-import { MDXRemote, MDXRemoteProps } from "next-mdx-remote/rsc";
-import React, { ReactNode } from "react";
+import { MDXRemote, type MDXRemoteProps } from "next-mdx-remote/rsc";
+import type { MDXComponents } from "mdx/types";
+import React from "react";
 import { DynamicSqlSandbox } from "@/components/work/DynamicSqlSandbox";
 
 import { 
@@ -8,8 +9,6 @@ import {
   Text,
   InlineCode,
   CodeBlock,
-  TextProps,
-  MediaProps,
   Accordion,
   AccordionGroup,
   Table,
@@ -24,12 +23,7 @@ import {
   SmartLink,
 } from "@once-ui-system/core";
 
-type CustomLinkProps = React.AnchorHTMLAttributes<HTMLAnchorElement> & {
-  href: string;
-  children: ReactNode;
-};
-
-function CustomLink({ href, children, ...props }: CustomLinkProps) {
+function CustomLink({ href = "", children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) {
   if (href.startsWith("/")) {
     return (
       <SmartLink href={href} {...props}>
@@ -53,8 +47,8 @@ function CustomLink({ href, children, ...props }: CustomLinkProps) {
   );
 }
 
-function createImage({ alt, src, ...props }: MediaProps & { src: string }) {
-  if (!src) {
+function createImage({ alt = "", src }: React.ImgHTMLAttributes<HTMLImageElement>) {
+  if (typeof src !== "string" || !src) {
     console.error("Media requires a valid 'src' property.");
     return null;
   }
@@ -70,7 +64,6 @@ function createImage({ alt, src, ...props }: MediaProps & { src: string }) {
       sizes="(max-width: 960px) 100vw, 960px"
       alt={alt}
       src={src}
-      {...props}
     />
   );
 }
@@ -85,15 +78,14 @@ function slugify(str: string): string {
 }
 
 function createHeading(as: "h1" | "h2" | "h3" | "h4" | "h5" | "h6") {
-  const CustomHeading = ({ children, ...props }: Omit<React.ComponentProps<typeof HeadingLink>, 'as' | 'id'>) => {
-    const slug = slugify(children as string);
+  const CustomHeading = ({ children }: React.HTMLAttributes<HTMLHeadingElement>) => {
+    const slug = slugify(String(children));
     return (
       <HeadingLink
         marginTop="24"
         marginBottom="12"
         as={as}
         id={slug}
-        {...props}
       >
         {children}
       </HeadingLink>
@@ -105,7 +97,7 @@ function createHeading(as: "h1" | "h2" | "h3" | "h4" | "h5" | "h6") {
   return CustomHeading;
 }
 
-function createParagraph({ children }: TextProps) {
+function createParagraph({ children }: React.HTMLAttributes<HTMLParagraphElement>) {
   return (
     <Text
       style={{ lineHeight: "175%" }}
@@ -119,18 +111,22 @@ function createParagraph({ children }: TextProps) {
   );
 }
 
-function createInlineCode({ children }: { children: ReactNode }) {
+function createInlineCode({ children }: React.HTMLAttributes<HTMLElement>) {
   return <InlineCode>{children}</InlineCode>;
 }
 
-function createCodeBlock(props: any) {
+function createCodeBlock(props: React.HTMLAttributes<HTMLPreElement>) {
   // For pre tags that contain code blocks
-  if (props.children && props.children.props && props.children.props.className) {
+  if (
+    React.isValidElement<React.HTMLAttributes<HTMLElement>>(props.children) &&
+    typeof props.children.props.className === "string"
+  ) {
     const { className, children } = props.children.props;
     
     // Extract language from className (format: language-xxx)
     const language = className.replace('language-', '');
     const label = language.charAt(0).toUpperCase() + language.slice(1);
+    const code = typeof children === "string" ? children : String(children ?? "");
     
     return (
       <CodeBlock
@@ -138,7 +134,7 @@ function createCodeBlock(props: any) {
         marginBottom="16"
         codes={[
           {
-            code: children,
+            code,
             language,
             label
           }
@@ -152,18 +148,18 @@ function createCodeBlock(props: any) {
   return <pre {...props} />;
 }
 
-const components = {
-  p: createParagraph as any,
-  h1: createHeading("h1") as any,
-  h2: createHeading("h2") as any,
-  h3: createHeading("h3") as any,
-  h4: createHeading("h4") as any,
-  h5: createHeading("h5") as any,
-  h6: createHeading("h6") as any,
-  img: createImage as any,
-  a: CustomLink as any,
-  code: createInlineCode as any,
-  pre: createCodeBlock as any,
+const components: MDXComponents = {
+  p: createParagraph,
+  h1: createHeading("h1"),
+  h2: createHeading("h2"),
+  h3: createHeading("h3"),
+  h4: createHeading("h4"),
+  h5: createHeading("h5"),
+  h6: createHeading("h6"),
+  img: createImage,
+  a: CustomLink,
+  code: createInlineCode,
+  pre: createCodeBlock,
   Heading,
   Text,
   CodeBlock,
@@ -183,8 +179,8 @@ const components = {
   DynamicSqlSandbox,
 };
 
-type CustomMDXProps = MDXRemoteProps & {
-  components?: typeof components;
+type CustomMDXProps = Omit<MDXRemoteProps, "components"> & {
+  components?: MDXComponents;
 };
 
 export function CustomMDX(props: CustomMDXProps) {

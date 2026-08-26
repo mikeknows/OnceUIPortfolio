@@ -3,7 +3,7 @@
 import { ChangeEvent, DragEvent, useMemo, useState } from "react";
 import { DEMO_DATASET } from "./constants";
 import { demoDatasetText, parseInput, runDataIntegrityPipeline } from "./engine";
-import { FilterKey, ProcessedRecord, RawRecord } from "./types";
+import type { FilterKey, ProcessedRecord, RawRecord } from "./types";
 import styles from "./DataIntegrityLab.module.css";
 
 const decisionColor: Record<ProcessedRecord["decision"], string> = {
@@ -119,6 +119,11 @@ export function DataIntegrityLab() {
 
   const exportResults = (format: "json" | "csv") => {
     const raw = filteredRecords.map((item) => ({ ...item.normalized, decision: item.decision, explanation: item.explanation }));
+    const encodeCsvCell = (value: unknown) => {
+      let text = `${value ?? ""}`;
+      if (/^[=+\-@\t\r]/.test(text)) text = `'${text}`;
+      return /[",\r\n]/.test(text) ? `"${text.replace(/"/g, '""')}"` : text;
+    };
     const payload =
       format === "json"
         ? JSON.stringify(raw, null, 2)
@@ -126,16 +131,15 @@ export function DataIntegrityLab() {
             Object.keys(raw[0] ?? {}).join(","),
             ...raw.map((row) =>
               Object.values(row)
-                .map((value) => {
-                  const text = `${value ?? ""}`;
-                  return text.includes(",") ? `"${text.replace(/"/g, '""')}"` : text;
-                })
+                .map(encodeCsvCell)
                 .join(",")
             ),
           ]
             .filter(Boolean)
             .join("\n");
-    const blob = new Blob([payload], { type: "text/plain" });
+    const blob = new Blob([payload], {
+      type: format === "csv" ? "text/csv;charset=utf-8" : "application/json;charset=utf-8",
+    });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
@@ -157,20 +161,24 @@ export function DataIntegrityLab() {
         <div className={styles.panel} onDrop={onDrop} onDragOver={(event) => event.preventDefault()}>
           <h2>Upload</h2>
           <p>Drop a JSON/CSV file or choose one from disk.</p>
-          <input type="file" accept=".json,.csv,text/csv,application/json" onChange={onFileInput} />
+          <label className={styles.controlLabel} htmlFor="record-file">Choose a JSON or CSV file</label>
+          <input id="record-file" type="file" accept=".json,.csv,text/csv,application/json" onChange={onFileInput} />
         </div>
 
         <div className={styles.panel}>
           <h2>Paste JSON or CSV</h2>
+          <label className={styles.controlLabel} htmlFor="record-input">Synthetic records</label>
           <textarea
+            id="record-input"
             value={inputText}
             onChange={(event) => setInputText(event.target.value)}
             placeholder="Paste records here..."
             className={styles.textarea}
           />
           <div className={styles.buttonRow}>
-            <button onClick={handleRun}>Run analysis</button>
+            <button type="button" onClick={handleRun}>Run analysis</button>
             <button
+              type="button"
               onClick={() => {
                 setInputText(demoDatasetText);
                 setError("");
@@ -181,7 +189,7 @@ export function DataIntegrityLab() {
               Load demo dataset
             </button>
           </div>
-          {error && <p className={styles.error}>{error}</p>}
+          {error && <p className={styles.error} role="alert">{error}</p>}
         </div>
       </section>
 
@@ -204,9 +212,10 @@ export function DataIntegrityLab() {
             className={styles.search}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
+            aria-label="Search analyzed records"
             placeholder="Search by name, id, source, decision..."
           />
-          <select value={filter} onChange={(event) => setFilter(event.target.value as FilterKey)}>
+          <select aria-label="Filter analyzed records" value={filter} onChange={(event) => setFilter(event.target.value as FilterKey)}>
             <option value="all">All records</option>
             <option value="valid">Valid only</option>
             <option value="invalid">Invalid only</option>
@@ -214,13 +223,13 @@ export function DataIntegrityLab() {
             <option value="collisions">Collisions</option>
             <option value="manualReview">Manual review</option>
           </select>
-          <select value={sortKey} onChange={(event) => setSortKey(event.target.value as "id" | "decision" | "validity") }>
+          <select aria-label="Sort analyzed records" value={sortKey} onChange={(event) => setSortKey(event.target.value as "id" | "decision" | "validity") }>
             <option value="id">Sort: Record id</option>
             <option value="decision">Sort: Decision</option>
             <option value="validity">Sort: Validity</option>
           </select>
-          <button className={styles.secondary} onClick={() => exportResults("json")}>Export JSON</button>
-          <button className={styles.secondary} onClick={() => exportResults("csv")}>Export CSV</button>
+          <button type="button" className={styles.secondary} onClick={() => exportResults("json")}>Export JSON</button>
+          <button type="button" className={styles.secondary} onClick={() => exportResults("csv")}>Export CSV</button>
         </div>
 
         <div className={styles.responsiveArea}>
@@ -241,7 +250,15 @@ export function DataIntegrityLab() {
                 <tr
                   key={record.id}
                   className={selected?.id === record.id ? styles.activeRow : ""}
+                  tabIndex={0}
+                  aria-selected={selected?.id === record.id}
                   onClick={() => setSelectedId(record.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      setSelectedId(record.id);
+                    }
+                  }}
                 >
                   <td>{record.id}</td>
                   <td>{record.normalized.firstName} {record.normalized.lastName}</td>

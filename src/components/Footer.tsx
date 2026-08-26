@@ -1,4 +1,4 @@
-import { Flex, IconButton, Text } from "@once-ui-system/core";
+import { Flex, IconButton, SmartLink, Text } from "@once-ui-system/core";
 import { person, social } from "@/resources";
 import styles from "./Footer.module.scss";
 
@@ -11,7 +11,7 @@ export const Footer = () => {
       fillWidth
       padding="8"
       horizontal="center"
-      mobileDirection="column"
+      s={{ direction: "column" }}
     >
       <Flex
         className={styles.mobile}
@@ -19,15 +19,14 @@ export const Footer = () => {
         paddingY="8"
         paddingX="16"
         gap="16"
-        horizontal="space-between"
+        horizontal="between"
         vertical="center"
       >
         <Text variant="body-default-s" onBackground="neutral-strong">
           <Text onBackground="neutral-weak">© {currentYear} /</Text>
           <Text paddingX="4">{person.name}</Text>
-          <Text onBackground="neutral-weak">
-            / Thanks for visiting.
-          </Text>
+          <Text onBackground="neutral-weak">/ Styling foundation: </Text>
+          <SmartLink href="https://once-ui.com">Once UI</SmartLink>
         </Text>
         <Flex gap="16">
           {social.map(
@@ -45,7 +44,7 @@ export const Footer = () => {
           )}
         </Flex>
       </Flex>
-      <Flex height="80" show="s"></Flex>
+      <Flex height="80" hide s={{ hide: false }} />
     </Flex>
   );
 };

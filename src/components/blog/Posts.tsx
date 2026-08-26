@@ -15,7 +15,7 @@ export function Posts({
     thumbnail = false,
     direction
 }: PostsProps) {
-    let allBlogs = getPosts(['src', 'app', 'blog', 'posts']);
+    const allBlogs = getPosts(['src', 'app', 'blog', 'posts']);
 
     const sortedBlogs = allBlogs.sort((a, b) => {
         return new Date(b.metadata.publishedAt).getTime() - new Date(a.metadata.publishedAt).getTime();
@@ -32,7 +32,7 @@ export function Posts({
         <>
             {displayedBlogs.length > 0 && (
                 <Grid
-                    columns={columns} mobileColumns="1"
+                    columns={columns} s={{ columns: "1" }}
                     fillWidth marginBottom="40" gap="12">
                     {displayedBlogs.map((post) => (
                         <Post

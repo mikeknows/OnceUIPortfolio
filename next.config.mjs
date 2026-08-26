@@ -13,6 +13,20 @@ const nextConfig = {
     compiler: "modern",
     silenceDeprecations: ["legacy-js-api"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/work/building-once-ui-a-customizable-design-system",
+        destination: "/work/secure-delivery-fortify",
+        permanent: true,
+      },
+      {
+        source: "/blog/building-scalable-apis",
+        destination: "/blog/building-operable-apis",
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default withMDX(nextConfig);

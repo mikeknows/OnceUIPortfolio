@@ -1,6 +1,7 @@
 "use client";
 
-import { CSSProperties, useMemo, useState } from "react";
+import { CSSProperties, useEffect, useMemo, useRef, useState } from "react";
+import { isValidColumnIdentifier, parseColumns } from "./dynamicSql";
 
 const DEFAULT_SQL = `CREATE TABLE employees (
   id INT PRIMARY KEY,
@@ -14,21 +15,7 @@ const DEFAULT_ROWS = [
   { id: "1", first_name: "Avery", last_name: "Nguyen", department: "Data", salary: "92000" },
 ];
 
-const RESERVED = new Set(["primary", "foreign", "constraint", "key", "unique", "index", "check"]);
-
 type Row = Record<string, string>;
-
-function parseColumns(sql: string): string[] {
-  const match = sql.match(/\(([^]*)\)/m);
-  if (!match) return [];
-
-  return match[1]
-    .split("\n")
-    .map((line) => line.trim().replace(/,$/, ""))
-    .filter(Boolean)
-    .map((line) => line.split(/\s+/)[0]?.replace(/[`"']/g, "").toLowerCase())
-    .filter((column): column is string => Boolean(column && !RESERVED.has(column)));
-}
 
 function createEmptyRow(columns: string[]): Row {
   return columns.reduce<Row>((acc, column) => {
@@ -55,6 +42,21 @@ export function DynamicSqlSandbox() {
   const [rows, setRows] = useState<Row[]>(DEFAULT_ROWS);
   const [showColumnModal, setShowColumnModal] = useState(false);
   const [newColumn, setNewColumn] = useState("new_column");
+  const addColumnButtonRef = useRef<HTMLButtonElement>(null);
+  const newColumnInputRef = useRef<HTMLInputElement>(null);
+
+  const normalizedNewColumn = newColumn.trim().toLowerCase();
+  const newColumnIssue = !isValidColumnIdentifier(newColumn.trim())
+    ? "Use letters, numbers, and underscores; start with a letter or underscore."
+    : columns.includes(normalizedNewColumn)
+      ? "That column already exists."
+      : "";
+
+  useEffect(() => {
+    if (!showColumnModal) return;
+    newColumnInputRef.current?.focus();
+    newColumnInputRef.current?.select();
+  }, [showColumnModal]);
 
   const parseError = useMemo(
     () => (columns.length ? "" : "Could not detect columns. Add SQL fields inside CREATE TABLE (...)."),
@@ -88,9 +90,14 @@ export function DynamicSqlSandbox() {
     setShowColumnModal(false);
   };
 
+  const closeColumnModal = () => {
+    setShowColumnModal(false);
+    window.requestAnimationFrame(() => addColumnButtonRef.current?.focus());
+  };
+
   const handleConfirmAddColumn = () => {
-    const name = newColumn.trim().toLowerCase();
-    if (!name || columns.includes(name)) return;
+    const name = normalizedNewColumn;
+    if (newColumnIssue) return;
 
     const nextColumns = [...columns, name];
     setColumns(nextColumns);
@@ -98,7 +105,7 @@ export function DynamicSqlSandbox() {
 
     const insert = `\nALTER TABLE employees ADD COLUMN ${name} VARCHAR(255);`;
     setSql((prev) => prev.trimEnd() + insert);
-    setShowColumnModal(false);
+    closeColumnModal();
     setNewColumn("new_column");
   };
 
@@ -124,7 +131,11 @@ export function DynamicSqlSandbox() {
         <p style={{ margin: "0 0 12px", opacity: 0.85, fontSize: 14 }}>
           Edit SQL or use quick actions, then apply changes to re-map the grid schema.
         </p>
+        <label htmlFor="dynamic-sql-schema" style={{ display: "block", marginBottom: 7, fontSize: 13, fontWeight: 650 }}>
+          SQL schema
+        </label>
         <textarea
+          id="dynamic-sql-schema"
           value={sql}
           onChange={(event) => setSql(event.target.value)}
           spellCheck={false}
@@ -142,16 +153,17 @@ export function DynamicSqlSandbox() {
           }}
         />
         <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-          <button onClick={handleApplySql} style={buttonStyle}>
+          <button type="button" onClick={handleApplySql} style={buttonStyle}>
             Apply SQL Schema
           </button>
-          <button onClick={() => setShowColumnModal(true)} style={buttonStyle}>
+          <button type="button" ref={addColumnButtonRef} onClick={() => setShowColumnModal(true)} style={buttonStyle}>
             + Add Column
           </button>
-          <button onClick={handleAddRow} style={buttonStyle}>
+          <button type="button" onClick={handleAddRow} style={buttonStyle}>
             + Add Row
           </button>
           <button
+            type="button"
             onClick={handleReset}
             style={{
               ...buttonStyle,
@@ -217,6 +229,9 @@ export function DynamicSqlSandbox() {
 
       {showColumnModal && (
         <div
+          onClick={(event) => {
+            if (event.target === event.currentTarget) closeColumnModal();
+          }}
           style={{
             position: "fixed",
             inset: 0,
@@ -229,6 +244,33 @@ export function DynamicSqlSandbox() {
           }}
         >
           <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="add-column-title"
+            aria-describedby="new-column-guidance"
+            onKeyDown={(event) => {
+              if (event.key === "Escape") {
+                event.preventDefault();
+                closeColumnModal();
+                return;
+              }
+              if (event.key !== "Tab") return;
+
+              const focusable = Array.from(
+                event.currentTarget.querySelectorAll<HTMLElement>(
+                  'button:not([disabled]), input:not([disabled]), [tabindex]:not([tabindex="-1"])',
+                ),
+              );
+              const first = focusable[0];
+              const last = focusable[focusable.length - 1];
+              if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last?.focus();
+              } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first?.focus();
+              }
+            }}
             style={{
               width: "min(440px, 100%)",
               borderRadius: 14,
@@ -238,13 +280,20 @@ export function DynamicSqlSandbox() {
               padding: 16,
             }}
           >
-            <p style={{ margin: "0 0 8px", fontWeight: 700 }}>Add a new SQL column</p>
+            <p id="add-column-title" style={{ margin: "0 0 8px", fontWeight: 700 }}>Add a new SQL column</p>
             <p style={{ margin: "0 0 12px", fontSize: 13, opacity: 0.82 }}>
               Choose a column name and it will be appended to the schema and mapped into the grid.
             </p>
+            <label htmlFor="new-column-name" style={{ display: "block", marginBottom: 7, fontSize: 13, fontWeight: 650 }}>
+              Column name
+            </label>
             <input
+              id="new-column-name"
+              ref={newColumnInputRef}
               value={newColumn}
               onChange={(event) => setNewColumn(event.target.value)}
+              aria-describedby="new-column-guidance"
+              aria-invalid={Boolean(newColumnIssue)}
               placeholder="new_column"
               style={{
                 width: "100%",
@@ -255,9 +304,17 @@ export function DynamicSqlSandbox() {
                 color: "inherit",
               }}
             />
+            <p
+              id="new-column-guidance"
+              aria-live="polite"
+              style={{ margin: "8px 0 0", fontSize: 12, color: "var(--neutral-on-background-weak)" }}
+            >
+              {newColumnIssue || "Letters, numbers, and underscores are supported."}
+            </p>
             <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginTop: 12 }}>
               <button
-                onClick={() => setShowColumnModal(false)}
+                type="button"
+                onClick={closeColumnModal}
                 style={{
                   ...buttonStyle,
                   background: "var(--neutral-alpha-weak)",
@@ -265,7 +322,15 @@ export function DynamicSqlSandbox() {
               >
                 Cancel
               </button>
-              <button onClick={handleConfirmAddColumn} style={buttonStyle}>
+              <button
+                type="button"
+                onClick={handleConfirmAddColumn}
+                disabled={Boolean(newColumnIssue)}
+                style={{
+                  ...buttonStyle,
+                  opacity: newColumnIssue ? 0.5 : 1,
+                }}
+              >
                 Add Column
               </button>
             </div>

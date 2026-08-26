@@ -2,6 +2,7 @@
   width: min(1200px, 100%);
   display: grid;
   gap: 1rem;
+  margin-inline: auto;
 }
 
 .hero,
@@ -50,6 +51,14 @@
   background: rgba(15, 23, 42, 0.6);
   color: white;
   padding: 0.75rem;
+}
+
+.controlLabel {
+  display: block;
+  margin: 0 0 0.4rem;
+  color: var(--neutral-on-background-strong);
+  font-size: 0.82rem;
+  font-weight: 650;
 }
 
 .buttonRow {
@@ -125,8 +134,14 @@
 }
 
 .responsiveArea tbody tr:hover,
+.responsiveArea tbody tr:focus-visible,
 .activeRow {
   background: rgba(59, 130, 246, 0.13);
+}
+
+.responsiveArea tbody tr:focus-visible {
+  outline: 2px solid var(--brand-on-background-strong);
+  outline-offset: -2px;
 }
 
 .badge,
@@ -171,7 +186,16 @@
 
 @media (max-width: 920px) {
   .panel:first-child,
-  .panel:last-child,
+  .panel:last-child {
+    grid-column: span 12;
+  }
+
+  .card {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 520px) {
   .card {
     grid-column: span 12;
   }

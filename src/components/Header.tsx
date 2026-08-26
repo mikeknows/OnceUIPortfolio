@@ -1,55 +1,22 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import Link from "next/link";
 
 import { Fade, Flex, Line, ToggleButton } from "@once-ui-system/core";
 
-import { routes, display, person, about, blog, work, gallery } from "@/resources";
+import { routes, display, person, about, blog, work, hobby, gallery } from "@/resources";
 import { ThemeToggle } from "./ThemeToggle";
-import { LiveVisitors } from "./LiveVisitors";
 import styles from "./Header.module.scss";
-
-type TimeDisplayProps = {
-  timeZone: string;
-  locale?: string; // Optionally allow locale, defaulting to 'en-GB'
-};
-
-const TimeDisplay: React.FC<TimeDisplayProps> = ({ timeZone, locale = "en-GB" }) => {
-  const [currentTime, setCurrentTime] = useState("");
-
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      const options: Intl.DateTimeFormatOptions = {
-        timeZone,
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-        hour12: false,
-      };
-      const timeString = new Intl.DateTimeFormat(locale, options).format(now);
-      setCurrentTime(timeString);
-    };
-
-    updateTime();
-    const intervalId = setInterval(updateTime, 1000);
-
-    return () => clearInterval(intervalId);
-  }, [timeZone, locale]);
-
-  return <>{currentTime}</>;
-};
-
-export default TimeDisplay;
 
 export const Header = () => {
   const pathname = usePathname() ?? "";
+  const workSelected = pathname.startsWith("/work") || pathname === "/data-integrity-lab";
 
   return (
     <>
-      <Fade hide="s" fillWidth position="fixed" height="80" zIndex={9} />
-      <Fade show="s" fillWidth position="fixed" bottom="0" to="top" height="80" zIndex={9} />
+      <Fade s={{ hide: true }} fillWidth position="fixed" height="80" zIndex={9} />
+      <Fade hide s={{ hide: false }} fillWidth position="fixed" bottom="0" to="top" height="80" zIndex={9} />
       <Flex
         fitHeight
         position="unset"
@@ -61,12 +28,14 @@ export const Header = () => {
         horizontal="center"
         data-border="rounded"
       >
-        <Flex paddingLeft="12" fillWidth vertical="center" textVariant="body-default-s">
-          {display.location && (
-            <Flex hide="s">
-              <LiveVisitors />
-            </Flex>
-          )}
+        <Flex paddingLeft="24" fillWidth vertical="center" textVariant="body-default-s" s={{ hide: true }}>
+          <Link className={styles.identity} href="/" aria-label="Michael Plymire, home">
+            <span className={styles.monogram}>MP</span>
+            <span className={styles.identityCopy}>
+              <strong>Michael Plymire</strong>
+              <small>Software Engineer</small>
+            </span>
+          </Link>
         </Flex>
         <Flex fillWidth horizontal="center">
           <Flex
@@ -80,74 +49,111 @@ export const Header = () => {
           >
             <Flex gap="4" vertical="center" textVariant="body-default-s" suppressHydrationWarning>
               {routes["/"] && (
-                <ToggleButton prefixIcon="home" href="/" selected={pathname === "/"} />
+                <ToggleButton
+                  className={styles.mobileHome}
+                  aria-label="Home"
+                  prefixIcon="home"
+                  href="/"
+                  selected={pathname === "/"}
+                />
               )}
-              <Line background="neutral-alpha-medium" vert maxHeight="24" />
+              <Line
+                className={styles.mobileHomeDivider}
+                background="neutral-alpha-medium"
+                vert
+                maxHeight="24"
+              />
+              {routes["/work"] && (
+                <>
+                  <ToggleButton
+                    className={styles.desktopNavItem}
+                    prefixIcon="grid"
+                    href="/work"
+                    label={work.label}
+                    selected={workSelected}
+                  />
+                  <ToggleButton
+                    className={styles.mobileNavItem}
+                    prefixIcon="grid"
+                    href="/work"
+                    aria-label="Work"
+                    selected={workSelected}
+                  />
+                </>
+              )}
               {routes["/about"] && (
                 <>
                   <ToggleButton
-                    className="s-flex-hide"
+                    className={styles.desktopNavItem}
                     prefixIcon="person"
                     href="/about"
+                    aria-label="About"
                     label={about.label}
                     selected={pathname === "/about"}
                   />
                   <ToggleButton
-                    className="s-flex-show"
+                    className={styles.mobileNavItem}
                     prefixIcon="person"
                     href="/about"
+                    aria-label="About"
                     selected={pathname === "/about"}
                   />
                 </>
               )}
-              {routes["/work"] && (
+              {routes["/hobby-projects"] && (
                 <>
                   <ToggleButton
-                    className="s-flex-hide"
-                    prefixIcon="grid"
-                    href="/work"
-                    label={work.label}
-                    selected={pathname.startsWith("/work")}
+                    className={styles.desktopNavItem}
+                    prefixIcon="hobby"
+                    href="/hobby-projects"
+                    aria-label="Lab"
+                    label={hobby.label}
+                    selected={pathname.startsWith("/hobby-projects")}
                   />
                   <ToggleButton
-                    className="s-flex-show"
-                    prefixIcon="grid"
-                    href="/work"
-                    selected={pathname.startsWith("/work")}
-                  />
-                </>
-              )}
-              {routes["/blog"] && (
-                <>
-                  <ToggleButton
-                    className="s-flex-hide"
-                    prefixIcon="book"
-                    href="/blog"
-                    label={blog.label}
-                    selected={pathname.startsWith("/blog")}
-                  />
-                  <ToggleButton
-                    className="s-flex-show"
-                    prefixIcon="book"
-                    href="/blog"
-                    selected={pathname.startsWith("/blog")}
+                    className={styles.mobileNavItem}
+                    prefixIcon="hobby"
+                    href="/hobby-projects"
+                    aria-label="Lab"
+                    selected={pathname.startsWith("/hobby-projects")}
                   />
                 </>
               )}
               {routes["/gallery"] && (
                 <>
                   <ToggleButton
-                    className="s-flex-hide"
+                    className={styles.desktopNavItem}
                     prefixIcon="gallery"
                     href="/gallery"
+                    aria-label="Gallery"
                     label={gallery.label}
-                    selected={pathname.startsWith("/gallery")}
+                    selected={pathname === "/gallery"}
                   />
                   <ToggleButton
-                    className="s-flex-show"
+                    className={styles.mobileNavItem}
                     prefixIcon="gallery"
                     href="/gallery"
-                    selected={pathname.startsWith("/gallery")}
+                    aria-label="Gallery"
+                    selected={pathname === "/gallery"}
+                  />
+                </>
+              )}
+              {routes["/blog"] && (
+                <>
+                  <ToggleButton
+                    className={styles.desktopNavItem}
+                    prefixIcon="book"
+                    href="/blog"
+                    aria-label="Writing"
+                    label={blog.label}
+                    selected={pathname.startsWith("/blog")}
+                  />
+                  <ToggleButton
+                    className={styles.mobileNavItem}
+                    prefixIcon="book"
+                    href="/blog"
+                    aria-label="Writing"
+                    selected={pathname.startsWith("/blog")}
                   />
                 </>
               )}
@@ -160,16 +166,10 @@ export const Header = () => {
             </Flex>
           </Flex>
         </Flex>
-        <Flex fillWidth horizontal="end" vertical="center">
-          <Flex
-            paddingRight="12"
-            horizontal="end"
-            vertical="center"
-            textVariant="body-default-s"
-            gap="20"
-          >
-            <Flex hide="s">{display.time && <TimeDisplay timeZone={person.location} />}</Flex>
-          </Flex>
+        <Flex fillWidth horizontal="end" vertical="center" paddingRight="12" s={{ hide: true }}>
+          <a className={styles.contact} href={`mailto:${person.email}`}>
+            Let&apos;s talk
+          </a>
         </Flex>
       </Flex>
     </>

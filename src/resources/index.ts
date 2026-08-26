@@ -7,7 +7,10 @@ export {
   about,
   blog,
   work,
+  hobby,
   gallery,
 } from "./content";
 
-export { display, mailchimp, routes, protectedRoutes, baseURL, fonts, style, schema, sameAs, effects, dataStyle } from "./once-ui.config";
+export { showcaseProjects, hobbyProjects } from "./showcase";
+
+export { display, mailchimp, routes, baseURL, fonts, style, schema, sameAs, effects, dataStyle } from "./once-ui.config";

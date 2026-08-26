@@ -7,13 +7,16 @@ images:
 team:
   - name: "Michael Plymire"
     role: "Full Stack Developer"
-    avatar: "/images/avatar.svg"
-    linkedIn: "https://www.linkedin.com/in/michael-plymire-b43b43179/"
+    avatar: "/images/personal/michael-plymire-headshot.jpg"
+    linkedIn: "https://www.linkedin.com/in/michaelplymire/"
 ---
 
 ## API Communication Architecture
 
 This project demonstrates the complete flow of data between C# Web API backends and client-side applications, showcasing modern patterns for secure and efficient communication.
+
+> This guide is informed by general professional experience. All examples are original, simplified,
+> and product-neutral; they do not reproduce an employer, customer, or production system.
 
 ## Backend API Implementation (C# .NET)
 
@@ -25,10 +28,19 @@ This project demonstrates the complete flow of data between C# Web API backends 
 public class UserController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly ILogger<UserController> _logger;
     
-    public UserController(IUserService userService)
+    public UserController(IUserService userService, ILogger<UserController> logger)
     {
         _userService = userService;
+        _logger = logger;
+    }
+
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<UserDto>> GetUser(int id)
+    {
+        var user = await _userService.GetUserByIdAsync(id);
+        return user is null ? NotFound() : Ok(user);
     }
     
     [HttpGet]
@@ -41,7 +53,11 @@ public class UserController : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = "Internal server error", details = ex.Message });
+            _logger.LogError(ex, "Failed to load users");
+            return Problem(
+                statusCode: StatusCodes.Status500InternalServerError,
+                title: "The request could not be completed."
+            );
         }
     }
     
@@ -91,25 +107,26 @@ public class CreateUserRequest
 ```typescript
 class ApiClient {
     private baseUrl: string;
-    private authToken: string;
+    private getAccessToken: () => Promise<string | null>;
     
-    constructor(baseUrl: string) {
+    constructor(baseUrl: string, getAccessToken: () => Promise<string | null>) {
         this.baseUrl = baseUrl;
-        this.authToken = localStorage.getItem('authToken') || '';
+        this.getAccessToken = getAccessToken;
     }
     
     private async makeRequest<T>(
         endpoint: string, 
         method: 'GET' | 'POST' | 'PUT' | 'DELETE' = 'GET',
-        data?: any
+        data?: unknown
     ): Promise<T> {
-        const url = `${this.baseUrl}${endpoint}`;
+        const url = `${this.baseUrl.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
         const headers: HeadersInit = {
-            'Content-Type': 'application/json',
+            Accept: 'application/json',
         };
+        const authToken = await this.getAccessToken();
         
-        if (this.authToken) {
-            headers.Authorization = `Bearer ${this.authToken}`;
+        if (authToken) {
+            headers.Authorization = `Bearer ${authToken}`;
         }
         
         const config: RequestInit = {
@@ -118,6 +135,7 @@ class ApiClient {
         };
         
         if (data && method !== 'GET') {
+            headers['Content-Type'] = 'application/json';
             config.body = JSON.stringify(data);
         }
         
@@ -131,11 +149,11 @@ class ApiClient {
     }
     
     async getUsers(): Promise<UserDto[]> {
-        return this.makeRequest<UserDto[]>('/api/user');
+        return this.makeRequest<UserDto[]>('/user');
     }
     
     async createUser(userData: CreateUserRequest): Promise<UserDto> {
-        return this.makeRequest<UserDto>('/api/user', 'POST', userData);
+        return this.makeRequest<UserDto>('/user', 'POST', userData);
     }
 }
 ```
@@ -147,7 +165,7 @@ const UserManagement: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     
-    const apiClient = new ApiClient('https://api.myapp.com');
+    const apiClient = new ApiClient('/api', getShortLivedAccessToken);
     
     useEffect(() => {
         loadUsers();
@@ -191,7 +209,7 @@ const UserManagement: React.FC = () => {
 ### Authentication Flow
 1. **Client Login**: User credentials sent to `/api/auth/login`
 2. **Token Generation**: Server validates and returns JWT token
-3. **Token Storage**: Client stores token (localStorage/sessionStorage)
+3. **Session Handling**: Prefer a server-managed `HttpOnly`, `Secure`, `SameSite` cookie when the architecture allows it; otherwise keep short-lived access tokens out of persistent browser storage
 4. **Authenticated Requests**: Token included in Authorization header
 5. **Token Refresh**: Automatic renewal before expiration
 
@@ -207,7 +225,7 @@ const UserManagement: React.FC = () => {
 public class ApiErrorResponse
 {
     public string Message { get; set; }
-    public string Details { get; set; }
+    public string RequestId { get; set; }
     public int StatusCode { get; set; }
     public DateTime Timestamp { get; set; } = DateTime.UtcNow;
 }
@@ -253,6 +271,7 @@ public async Task<ActionResult<PagedResult<UserDto>>> GetUsers(
 
 - **HTTPS Only**: All communications encrypted
 - **Input Validation**: Comprehensive validation on both sides
+- **Session Security**: Short-lived sessions, secure cookie settings, and CSRF defenses where applicable
 - **Rate Limiting**: Prevent API abuse
 - **CORS Configuration**: Proper cross-origin resource sharing
 - **SQL Injection Prevention**: Parameterized queries only
@@ -262,7 +281,7 @@ public async Task<ActionResult<PagedResult<UserDto>>> GetUsers(
 - **Type Safety**: Strong typing end-to-end with TypeScript and C#
 - **Performance**: Optimized queries and caching strategies
 - **Maintainability**: Clear separation of concerns and consistent patterns
-- **Security**: Comprehensive security measures implemented
+- **Security**: Clear boundaries for authorization, validation, session handling, and safe error responses
 - **Developer Experience**: Clear documentation and error messages
 
 This architecture provides a robust foundation for scalable web applications with secure and efficient client-server communication.

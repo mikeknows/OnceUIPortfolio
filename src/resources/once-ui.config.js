@@ -1,27 +1,22 @@
 import { home } from "./content";
 
 // IMPORTANT: Replace with your own domain address - it's used for SEO in meta tags and schema
-const baseURL = "https://michaelplymire.com";
+const baseURL = "https://mike-p-portfolio.vercel.app";
 
 const routes = {
   "/": true,
   "/about": true,
   "/work": true,
+  "/hobby-projects": true,
   "/blog": true,
   "/gallery": true,
   "/data-integrity-lab": true,
 };
 
 const display = {
-  location: true,
-  time: true,
+  location: false,
+  time: false,
   themeSwitcher: true
-};
-
-// Enable password protection on selected routes
-// Set password in the .env file, refer to .env.example
-const protectedRoutes = {
-  "/work/automate-design-handovers-with-a-figma-to-code-pipeline": true,
 };
 
 // Import and set font for each variant
@@ -129,7 +124,7 @@ const effects = {
 };
 
 const mailchimp = {
-  action: "https://url/subscribe/post?parameters",
+  action: "",
   effects: {
     mask: {
       cursor: true,
@@ -175,17 +170,16 @@ const mailchimp = {
 // default schema data
 const schema = {
   logo: "",
-  type: "Organization",
-  name: "Once UI",
+  type: "Person",
+  name: "Michael Plymire",
   description: home.description,
-  email: "lorant@once-ui.com",
+  email: "michael.plymire@gmail.com",
 };
 
 // social links
 const sameAs = {
-  threads: "https://www.threads.com/@once_ui",
-  linkedin: "https://www.linkedin.com/company/once-ui/",
-  discord: "https://discord.com/invite/5EyAQ4eNdS",
+  github: "https://github.com/mikeknows",
+  linkedin: "https://www.linkedin.com/in/michaelplymire/",
 };
 
-export { display, mailchimp, routes, protectedRoutes, baseURL, fonts, style, schema, sameAs, effects, dataStyle };
+export { display, mailchimp, routes, baseURL, fonts, style, schema, sameAs, effects, dataStyle };

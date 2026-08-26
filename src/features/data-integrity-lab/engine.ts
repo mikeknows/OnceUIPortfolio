@@ -1,5 +1,5 @@
 import { DEMO_DATASET, REQUIRED_FIELDS, STREET_MAP, US_STATE_CODES } from "./constants";
-import {
+import type {
   Decision,
   MatchConfidence,
   MatchResult,
@@ -40,6 +40,9 @@ const csvSplit = (line: string): string[] => {
   return parts.map((part) => part.trim());
 };
 
+const isRawRecord = (value: unknown): value is RawRecord =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
 export const parseInput = (value: string): { records: RawRecord[]; error?: string } => {
   const trimmed = value.trim();
   if (!trimmed) {
@@ -50,9 +53,15 @@ export const parseInput = (value: string): { records: RawRecord[]; error?: strin
     if (trimmed.startsWith("[") || trimmed.startsWith("{")) {
       const parsed = JSON.parse(trimmed);
       if (Array.isArray(parsed)) {
-        return { records: parsed as RawRecord[] };
+        if (!parsed.every(isRawRecord)) {
+          return { records: [], error: "JSON must contain an object or an array of objects." };
+        }
+        return { records: parsed };
       }
-      return { records: [parsed as RawRecord] };
+      if (isRawRecord(parsed)) {
+        return { records: [parsed] };
+      }
+      return { records: [], error: "JSON must contain an object or an array of objects." };
     }
   } catch {
     // fall through to CSV parser
@@ -75,14 +84,20 @@ export const parseInput = (value: string): { records: RawRecord[]; error?: strin
   return { records };
 };
 
-const cleanText = (value?: string): string => (value ?? "").replace(/\s+/g, " ").trim();
+const cleanText = (value?: unknown): string => {
+  if (value === null || value === undefined) return "";
 
-const titleCase = (value?: string): string =>
+  const scalar = ["string", "number", "boolean", "bigint"];
+  const text = scalar.includes(typeof value) ? String(value) : "";
+  return text.replace(/\s+/g, " ").trim();
+};
+
+const titleCase = (value?: unknown): string =>
   cleanText(value)
     .toLowerCase()
     .replace(/\b\w/g, (char) => char.toUpperCase());
 
-const normalizeStreet = (street?: string): string => {
+const normalizeStreet = (street?: unknown): string => {
   const words = cleanText(street).split(" ").filter(Boolean);
   return words
     .map((word) => {
@@ -96,18 +111,18 @@ export const normalizeRecord = (raw: RawRecord): NormalizedRecord => {
   const phoneDigits = cleanText(raw.phone).replace(/\D/g, "");
 
   return {
-    firstName: titleCase(raw.firstName as string),
-    lastName: titleCase(raw.lastName as string),
-    dateOfBirth: cleanText(raw.dateOfBirth as string),
-    ssnLast4: cleanText(raw.ssnLast4 as string).replace(/\D/g, ""),
-    email: cleanText(raw.email as string).toLowerCase(),
+    firstName: titleCase(raw.firstName),
+    lastName: titleCase(raw.lastName),
+    dateOfBirth: cleanText(raw.dateOfBirth),
+    ssnLast4: cleanText(raw.ssnLast4).replace(/\D/g, ""),
+    email: cleanText(raw.email).toLowerCase(),
     phone: phoneDigits,
-    street: normalizeStreet(raw.street as string),
-    city: titleCase(raw.city as string),
-    state: cleanText(raw.state as string).toUpperCase(),
-    zip: cleanText(raw.zip as string),
-    sourceSystemId: cleanText(raw.sourceSystemId as string),
-    externalClientId: cleanText(raw.externalClientId as string),
+    street: normalizeStreet(raw.street),
+    city: titleCase(raw.city),
+    state: cleanText(raw.state).toUpperCase(),
+    zip: cleanText(raw.zip),
+    sourceSystemId: cleanText(raw.sourceSystemId),
+    externalClientId: cleanText(raw.externalClientId),
   };
 };
 
@@ -157,10 +172,22 @@ const confidenceForType = (type: MatchType): MatchConfidence => {
 };
 
 const materialPersonDiff = (a: NormalizedRecord, b: NormalizedRecord): boolean =>
-  a.lastName !== b.lastName || a.dateOfBirth !== b.dateOfBirth || (!!a.ssnLast4 && !!b.ssnLast4 && a.ssnLast4 !== b.ssnLast4);
+  a.firstName !== b.firstName ||
+  a.lastName !== b.lastName ||
+  a.dateOfBirth !== b.dateOfBirth ||
+  (!!a.ssnLast4 && !!b.ssnLast4 && a.ssnLast4 !== b.ssnLast4);
 
 const detectMatch = (current: NormalizedRecord, existing: NormalizedRecord): MatchResult | null => {
   if (current.externalClientId && current.externalClientId === existing.externalClientId && current.sourceSystemId === existing.sourceSystemId) {
+    if (materialPersonDiff(current, existing)) {
+      return {
+        targetId: `${existing.sourceSystemId}:${existing.externalClientId}`,
+        type: "collision",
+        confidence: confidenceForType("collision"),
+        reason: "Same source and external IDs but materially different identity details.",
+      };
+    }
+
     return {
       targetId: `${existing.sourceSystemId}:${existing.externalClientId}`,
       type: "exact",
@@ -289,4 +316,3 @@ export const runDataIntegrityPipeline = (records: RawRecord[]): ProcessedRecord[
 };
 
 export const demoDatasetText = JSON.stringify(DEMO_DATASET, null, 2);
-

@@ -1,0 +1,90 @@
+---
+title: "Secure Delivery with GitHub Actions and Fortify"
+publishedAt: "2024-09-15"
+summary: "A product-neutral case study on making legacy .NET releases more repeatable while moving static security feedback earlier in delivery."
+images:
+  - "/images/projects/fortify-ci-cd.svg"
+team:
+  - name: "Michael Plymire"
+    role: "Software Engineer"
+    avatar: "/images/personal/michael-plymire-headshot.jpg"
+    linkedIn: "https://www.linkedin.com/in/michaelplymire/"
+---
+
+> This case study is informed by real professional experience. The workflow below is an original,
+> simplified reconstruction; it contains no employer source code, configuration, secrets, or internal architecture.
+
+## The engineering problem
+
+Legacy application releases often accumulate manual steps: build on the right machine, remember the
+right configuration, run security tooling, move the correct artifact, and document what happened.
+Every undocumented step creates another opportunity for drift or a difficult rollback.
+
+My goal was not automation for its own sake. It was to make the release path **repeatable, reviewable,
+and easier to diagnose** while moving security feedback closer to the code change that introduced it.
+
+## What I owned
+
+- Established source-control and release workflows for .NET applications.
+- Automated builds and artifact creation with GitHub Actions.
+- Integrated Fortify static analysis into the delivery path.
+- Separated staging and production concerns and documented deployment expectations.
+- Supported the realities of legacy .NET and VB.NET code rather than assuming a greenfield stack.
+
+## Product-neutral pipeline pattern
+
+```yaml
+name: secure-delivery
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  build-and-scan:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Restore and build
+        run: ./build.ps1
+      - name: Static security analysis
+        run: ./security-scan.ps1
+      - name: Publish versioned artifact
+        run: ./publish-artifact.ps1
+```
+
+The sample is deliberately incomplete. A real implementation must use pinned actions, protected
+environments, least-privilege credentials, secret management, retention rules, and a deployment
+mechanism appropriate to the application.
+
+## Design decisions
+
+### Fail before deployment
+
+Build or security failures should stop the pipeline before an artifact reaches a protected environment.
+That makes the gate enforceable instead of depending on someone remembering a checklist.
+
+### Promote one versioned artifact
+
+Rebuilding separately for each environment invites drift. Producing a versioned artifact once and
+promoting that same artifact makes releases easier to trace and reason about.
+
+### Keep findings actionable
+
+Static analysis is most useful when developers can connect a result to a change, understand its severity,
+and either fix it or document a reviewed exception. A noisy scanner that nobody trusts is not a security control.
+
+### Design for legacy constraints
+
+Older applications may require Windows runners, specialized build tools, or deployment steps that cannot
+be modernized all at once. The workflow should make those constraints explicit and gradually reduce them.
+
+## Outcome
+
+The delivery process became faster to repeat, easier to audit, and less dependent on individual memory.
+Security feedback arrived earlier, staging and production expectations became clearer, and release knowledge
+moved into versioned automation and documentation.
+
+The important result was not a dramatic percentage. It was a process the team could understand, inspect,
+and improve without pretending the legacy system had become a cloud-native greenfield application.
