@@ -10,7 +10,7 @@ export async function generateMetadata() {
     title: hobby.title,
     description: hobby.description,
     baseURL,
-    image: "/images/personal/gaming-handhelds.jpg",
+    image: "/images/showcase/steam-deck-terminal.jpg",
     path: hobby.path,
   });
 }
@@ -56,7 +56,7 @@ export default function HobbyProjectsPage() {
         path={hobby.path}
         title={hobby.title}
         description={hobby.description}
-        image={`${baseURL}/images/personal/gaming-handhelds.jpg`}
+        image={`${baseURL}/images/showcase/steam-deck-terminal.jpg`}
         author={{
           name: person.name,
           url: `${baseURL}${about.path}`,
@@ -80,7 +80,7 @@ export default function HobbyProjectsPage() {
       <article id="steamprint" className={styles.feature}>
         <div className={styles.visual}>
           <Image
-            src="/images/personal/gaming-handhelds.jpg"
+            src="/images/showcase/steam-deck-terminal.jpg"
             alt=""
             aria-hidden="true"
             fill
@@ -89,8 +89,8 @@ export default function HobbyProjectsPage() {
             className={styles.visualBackdrop}
           />
           <Image
-            src="/images/personal/gaming-handhelds.jpg"
-            alt="Michael's collection of handheld gaming systems"
+            src="/images/showcase/steam-deck-terminal.jpg"
+            alt="AI-generated illustration of a Steam Deck displaying a Linux terminal with a Markdown game library"
             fill
             priority
             sizes="(max-width: 900px) 100vw, 1100px"

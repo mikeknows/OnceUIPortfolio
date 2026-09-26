@@ -31,13 +31,13 @@
   box-sizing: border-box;
   padding: clamp(16px, 4vw, 42px);
   object-fit: contain;
-  filter: saturate(0.9) contrast(1.03) brightness(0.86);
+  object-position: center top;
   transform: scale(1.01);
   transition: transform 9s ease, filter 400ms ease;
 }
 
 .feature:hover .visualImage {
-  filter: saturate(1) contrast(1.06) brightness(0.78);
+  filter: none;
   transform: scale(1.035);
 }
 
