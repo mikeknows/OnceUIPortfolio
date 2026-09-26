@@ -51,4 +51,4 @@ Once UI retains ownership of its own library and template work.
 
 - [LinkedIn](https://www.linkedin.com/in/michaelplymire/)
 - [GitHub](https://github.com/mikeknows)
-- [Email](mailto:michael.plymire@gmail.com)
+- [Email](mailto:mplymire@icloud.com)

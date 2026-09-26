@@ -173,7 +173,7 @@ const schema = {
   type: "Person",
   name: "Michael Plymire",
   description: home.description,
-  email: "michael.plymire@gmail.com",
+  email: "mplymire@icloud.com",
 };
 
 // social links

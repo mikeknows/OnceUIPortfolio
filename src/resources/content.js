@@ -6,7 +6,7 @@ const person = {
   },
   role: "Software Engineer · Healthcare Systems & Automation",
   avatar: "/images/personal/michael-plymire-headshot.jpg",
-  email: "michael.plymire@gmail.com",
+  email: "mplymire@icloud.com",
   location: "America/Chicago",
   languages: ["English"], // optional: Leave the array empty if you don't want to display languages
 };
